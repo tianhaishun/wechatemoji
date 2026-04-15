@@ -38,6 +38,7 @@ exe = EXE(
     a.scripts,
     [],
     name='wechatemoji',
+    icon=str(project_dir / 'tauri_app' / 'src-tauri' / 'icons' / 'icon.ico'),
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,

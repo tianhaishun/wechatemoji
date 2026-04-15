@@ -24,7 +24,7 @@ class Api:
         self.emoji_files: list[str] = []
         self.upload_env: dict = {
             "ok": False,
-            "message": "upload env not checked yet",
+            "message": "还没有检查飞书上传环境",
             "python_package": False,
             "browser_runtime": False,
         }
@@ -57,13 +57,13 @@ class Api:
         return {
             "outputDir": config.EMOJI_OUTPUT_DIR,
             "uploadStatus": {
-                "text": "ready. upload env check is now on-demand to keep startup responsive.",
+                "text": "准备就绪，需要时再检查上传环境，这样启动会更轻快。",
                 "tone": "neutral",
             },
             "auditSummary": {
                 "tone": "neutral",
-                "title": "audit not run",
-                "detail": "audit will verify wechat extraction and feishu upload env.",
+                "title": "还没有运行诊断",
+                "detail": "诊断会检查微信提取链路和飞书上传环境。",
             },
             "busyState": {"busy": False, "action": ""},
         }
@@ -73,7 +73,7 @@ class Api:
     def detectWechat(self):
         self._emit(
             "wechatStatus",
-            {"tone": "neutral", "title": "detecting wechat", "detail": "reading wechat accounts and dirs..."},
+            {"tone": "neutral", "title": "正在检测微信", "detail": "正在读取微信账号和数据目录，请稍等一下。"},
         )
         threading.Thread(target=self._detect_wechat_worker, daemon=True).start()
 
@@ -91,7 +91,7 @@ class Api:
         if not result:
             return
         config.WECHAT_FILES_ROOT = result[0]
-        self._log(f"wechat data root set to: {result[0]}")
+        self._log(f"已设置微信数据目录：{result[0]}")
         self.detectWechat()
 
     def browseOutputDir(self):
@@ -103,16 +103,16 @@ class Api:
         config.EMOJI_OUTPUT_DIR = result[0]
         self._current_output_dir = result[0]
         self._emit("outputDir", result[0])
-        self._log(f"output dir updated to: {result[0]}")
+        self._log(f"已更新导出目录：{result[0]}")
 
     def openOutputDir(self):
         folder = config.EMOJI_OUTPUT_DIR
         os.makedirs(folder, exist_ok=True)
         try:
             os.startfile(folder)
-            self._log(f"opened output dir: {folder}")
+            self._log(f"已打开导出目录：{folder}")
         except Exception as exc:
-            self._log(f"failed to open output dir: {exc}", "error")
+            self._log(f"打开导出目录失败：{exc}", "error")
 
     # ---- Upload env check ----
 
@@ -131,13 +131,13 @@ class Api:
 
                 running_count = sum(1 for u in users if u.get("running"))
                 if running_count > 0:
-                    title = f"detected {running_count} running wechat account(s)"
-                    detail = "can decrypt emoticon.db and export emojis."
+                    title = f"检测到 {running_count} 个正在运行的微信账号"
+                    detail = "可以继续解密 emoticon.db 并导出表情。"
                     tone = "success"
                     self._log(title, "success")
                 else:
-                    title = f"found {len(users)} local wechat dirs, but no running process"
-                    detail = "db decryption will likely fail, tool will fall back to local cache."
+                    title = f"找到了 {len(users)} 个微信数据目录，但当前没有运行中的微信进程"
+                    detail = "数据库解密大概率会失败，工具会尽量回退到本地缓存。"
                     tone = "warning"
                     self._log(title, "warn")
 
@@ -145,18 +145,18 @@ class Api:
                 return
 
             self._emit("userList", [])
-            self._emit("dbPath", {"text": "no wechat data dir found", "ok": False})
+            self._emit("dbPath", {"text": "没有找到微信数据目录", "ok": False})
             self._emit(
                 "wechatStatus",
-                {"tone": "error", "title": "wechat not detected", "detail": "please login wechat or select data dir manually."},
+                {"tone": "error", "title": "没有检测到微信", "detail": "请先登录微信，或者手动选择微信数据目录。"},
             )
-            self._log("no wechat account or local data dir found", "error")
+            self._log("没有找到微信账号或本地数据目录", "error")
         except Exception as exc:
             self._emit(
                 "wechatStatus",
-                {"tone": "error", "title": "wechat detection failed", "detail": str(exc)},
+                {"tone": "error", "title": "微信检测失败", "detail": str(exc)},
             )
-            self._log(f"wechat detection failed: {exc}", "error")
+            self._log(f"微信检测失败：{exc}", "error")
 
     def _check_upload_env_worker(self):
         self.upload_env = self._resolve_upload_env()
@@ -178,7 +178,7 @@ class Api:
                 "ok": False,
                 "python_package": False,
                 "browser_runtime": False,
-                "message": f"upload env check failed: {exc}",
+                "message": f"上传环境检查失败：{exc}",
             }
 
     def runAudit(self):
@@ -188,9 +188,9 @@ class Api:
         self._set_busy(True, "audit")
         self._emit(
             "auditSummary",
-            {"tone": "neutral", "title": "running audit", "detail": "verifying wechat extraction and feishu upload env..."},
+            {"tone": "neutral", "title": "正在运行诊断", "detail": "正在检查微信提取链路和飞书上传环境…"},
         )
-        self._log("starting pipeline audit...")
+        self._log("开始运行链路诊断…")
 
         def worker():
             try:
@@ -211,25 +211,25 @@ class Api:
 
                 tone = "success" if extraction.get("ok") and upload_env.get("ok") else "warning"
                 detail = (
-                    f"wechat extraction: {'pass' if extraction.get('ok') else 'fail'}, "
-                    f"sample downloaded {extraction.get('sample_downloaded', 0)}; "
-                    f"feishu upload env: {'ready' if upload_env.get('ok') else 'not ready'}."
+                    f"微信提取：{'通过' if extraction.get('ok') else '未通过'}；"
+                    f"示例下载 {extraction.get('sample_downloaded', 0)} 个；"
+                    f"飞书上传环境：{'已就绪' if upload_env.get('ok') else '未就绪'}。"
                 )
                 self._emit(
                     "auditSummary",
                     {
                         "tone": tone,
-                        "title": extraction.get("message", "audit done"),
+                        "title": extraction.get("message", "诊断完成"),
                         "detail": detail,
                     },
                 )
-                self._log("pipeline audit complete", "success" if extraction.get("ok") else "warn")
+                self._log("链路诊断完成", "success" if extraction.get("ok") else "warn")
             except Exception as exc:
                 self._emit(
                     "auditSummary",
-                    {"tone": "error", "title": "audit failed", "detail": str(exc)},
+                    {"tone": "error", "title": "诊断失败", "detail": str(exc)},
                 )
-                self._log(f"audit failed: {exc}", "error")
+                self._log(f"诊断失败：{exc}", "error")
             finally:
                 self._set_busy(False, "")
 
@@ -316,7 +316,7 @@ class Api:
         folder = result[0]
         files = self._collect_emoji_files(folder)
         if not files:
-            self._log("no emoji files found in selected dir", "error")
+            self._log("选中的目录里没有找到表情图片", "error")
             return
 
         config.EMOJI_OUTPUT_DIR = folder
@@ -324,7 +324,7 @@ class Api:
         self.emoji_files = files
         self._emit("outputDir", folder)
         self._load_emoji_thumbs(files)
-        self._log(f"loaded {len(files)} emoji files from dir")
+        self._log(f"已从目录加载 {len(files)} 个表情文件")
 
     def loadEmojiFiles(self):
         result = self.window.create_file_dialog(
@@ -344,7 +344,7 @@ class Api:
                 files.append(str(path))
 
         if not files:
-            self._log("no supported emoji image files selected", "error")
+            self._log("没有选中受支持的表情图片", "error")
             return
 
         files = sorted(dict.fromkeys(files))
@@ -356,7 +356,7 @@ class Api:
         self.emoji_files = files
         self._emit("outputDir", config.EMOJI_OUTPUT_DIR)
         self._load_emoji_thumbs(files)
-        self._log(f"loaded {len(files)} emoji files from file picker")
+        self._log(f"已从文件选择器加载 {len(files)} 个表情文件")
 
     # ---- Upload ----
 
@@ -367,7 +367,7 @@ class Api:
         payload = self._parse_payload(raw_payload)
         files = payload.get("selectedFiles") or self.emoji_files
         if not files:
-            self._log("no emoji files to upload", "error")
+            self._log("没有可上传的表情文件", "error")
             return
 
         mode = (payload.get("mode") or "personal").strip()
@@ -376,19 +376,19 @@ class Api:
 
         if mode == "enterprise" and len(files) < config.FEISHU_EMOJI_PACK_MIN:
             self._log(
-                f"enterprise mode needs at least {config.FEISHU_EMOJI_PACK_MIN} emojis, only {len(files)} selected",
+                f"企业表情包模式至少需要 {config.FEISHU_EMOJI_PACK_MIN} 个表情，当前只选中了 {len(files)} 个",
                 "error",
             )
             self._emit(
                 "uploadStatus",
-                {"text": f"enterprise mode needs at least {config.FEISHU_EMOJI_PACK_MIN} emojis.", "tone": "error"},
+                {"text": f"企业表情包模式至少需要 {config.FEISHU_EMOJI_PACK_MIN} 个表情。", "tone": "error"},
             )
             return
 
         self._set_busy(True, "upload")
         self._set_progress("upload", 0)
-        self._emit("uploadStatus", {"text": "checking feishu env...", "tone": "neutral"})
-        self._log(f"starting feishu import: mode={mode}, files={len(files)}")
+        self._emit("uploadStatus", {"text": "正在检查飞书上传环境…", "tone": "neutral"})
+        self._log(f"开始导入飞书：模式={mode}，文件数={len(files)}")
 
         def worker():
             uploader = None
@@ -406,13 +406,13 @@ class Api:
                 if not self.upload_env.get("ok"):
                     self._emit(
                         "uploadStatus",
-                        {"text": self.upload_env.get("message", "upload env not ready"), "tone": "error"},
+                        {"text": self.upload_env.get("message", "飞书上传环境还没准备好"), "tone": "error"},
                     )
-                    self._log("feishu upload env not ready, cancelled", "error")
+                    self._log("飞书上传环境未就绪，已取消本次导入", "error")
                     self._on_upload_done({"success": 0, "failed": len(files)})
                     return
 
-                self._emit("uploadStatus", {"text": "launching feishu browser...", "tone": "neutral"})
+                self._emit("uploadStatus", {"text": "正在启动飞书浏览器窗口…", "tone": "neutral"})
                 from feishu_uploader import FeishuUploader
 
                 uploader = FeishuUploader(headless=False, progress_callback=self._on_upload_progress)
@@ -432,10 +432,10 @@ class Api:
                 result["stopped"] = self._should_stop_upload()
                 self._on_upload_done(result)
             except Exception as exc:
-                self._log(f"feishu import failed: {exc}", "error")
+                self._log(f"飞书导入失败：{exc}", "error")
                 self._emit(
                     "uploadStatus",
-                    {"text": f"feishu import failed: {exc}", "tone": "error"},
+                    {"text": f"飞书导入失败：{exc}", "tone": "error"},
                 )
                 self._on_upload_done({"success": 0, "failed": len(files)})
             finally:
@@ -453,7 +453,7 @@ class Api:
             return
         os.makedirs(os.path.dirname(self._stop_upload_signal_path()), exist_ok=True)
         Path(self._stop_upload_signal_path()).touch()
-        self._log("正在中止上传...", "warn")
+        self._log("正在中止上传，请稍等一下…", "warn")
 
     # ---- Progress callbacks ----
 
@@ -515,7 +515,7 @@ class Api:
         failed = result.get("failed", 0)
         stopped = bool(result.get("stopped"))
         if stopped:
-            summary = f"import stopped: success {success}, failed {failed}"
+            summary = f"导入已停止：成功 {success}，失败 {failed}"
             self._emit("uploadStatus", {"text": summary, "tone": "warning"})
             self._log(summary, "warn")
             return
@@ -523,9 +523,9 @@ class Api:
         self._set_progress("upload", 100 if success or failed else 0)
         self._emit(
             "uploadStatus",
-            {"text": f"import done: success {success}, failed {failed}", "tone": tone},
+            {"text": f"导入完成：成功 {success}，失败 {failed}", "tone": tone},
         )
-        self._log(f"feishu import done: success {success}, failed {failed}", "success" if failed == 0 else "warn")
+        self._log(f"飞书导入完成：成功 {success}，失败 {failed}", "success" if failed == 0 else "warn")
 
     # ---- Emoji thumbs ----
 
@@ -581,7 +581,7 @@ class Api:
         try:
             bridge_common.emit_db_path_for_user(self._emit, user)
         except Exception as exc:
-            self._emit("dbPath", {"text": f"db detection failed: {exc}", "ok": False})
+            self._emit("dbPath", {"text": f"数据库检测失败：{exc}", "ok": False})
 
     def _parse_payload(self, raw_payload: str | None) -> dict:
         if not raw_payload:
@@ -646,7 +646,7 @@ def run_gui():
     html_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "web", "index.html")
 
     window = webview.create_window(
-        "WeChat Emoji -> Feishu",
+        "微信表情乐园 · 飞书贴纸站",
         url=html_path,
         js_api=api,
         width=1040,

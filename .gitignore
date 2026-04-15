@@ -23,6 +23,7 @@ Thumbs.db
 # Screenshots & temp files
 *.png
 !web/assets/*.png
+!tauri_app/src-tauri/icons/*.png
 screenshot*.png
 
 # Playwright MCP

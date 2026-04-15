@@ -1,58 +1,39 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>微信表情包 → 飞书</title>
+<title>微信表情乐园 · 飞书贴纸站</title>
+<link rel="icon" href="./assets/app-mascot.png">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  /* Background */
-  --bg-base: #080b16;
-  --bg-glass: rgba(13, 17, 23, 0.40);
-  --bg-glass-heavy: rgba(13, 17, 23, 0.60);
-  --bg-input: rgba(255, 255, 255, 0.04);
-  --bg-input-focus: rgba(255, 255, 255, 0.07);
-
-  /* Glass */
-  --glass-border: rgba(255, 255, 255, 0.06);
-  --glass-border-hover: rgba(255, 255, 255, 0.12);
-  --glass-border-active: rgba(255, 255, 255, 0.18);
-
-  /* Text */
-  --text-primary: #e2e8f0;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --text-accent: #5eead4;
-
-  /* Accent */
-  --accent: #2dd4bf;
-  --accent-bright: #5eead4;
-  --accent-dim: #0f766e;
-  --accent-glow: rgba(45, 212, 191, 0.25);
-  --violet: #8b5cf6;
-
-  /* Semantic */
-  --success: #4ade80;
-  --success-soft: rgba(74, 222, 128, 0.10);
-  --warning: #fbbf24;
-  --warning-soft: rgba(251, 191, 36, 0.10);
-  --error: #f87171;
-  --error-soft: rgba(248, 113, 113, 0.10);
-
-  /* Shadows */
-  --shadow-elevated: 0 16px 48px rgba(0,0,0,0.45), 0 6px 16px rgba(0,0,0,0.32);
-  --shadow-glass: 0 8px 32px rgba(0,0,0,0.37), 0 2px 8px rgba(0,0,0,0.22);
-  --shadow-resting: 0 4px 16px rgba(0,0,0,0.30), 0 1px 4px rgba(0,0,0,0.18);
-
-  /* Radius */
-  --radius-sm: 10px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
-
-  /* Font */
-  --font: "MiSans", "HarmonyOS Sans SC", "PingFang SC", "Microsoft YaHei UI", sans-serif;
+  --bg-main: #fff5dd;
+  --bg-card: rgba(255, 252, 246, 0.9);
+  --bg-card-strong: rgba(255, 255, 255, 0.96);
+  --text-primary: #644533;
+  --text-secondary: #8b6853;
+  --text-muted: #b28e74;
+  --mint: #73d5bd;
+  --mint-deep: #38b798;
+  --peach: #ffb88b;
+  --sun: #ffd568;
+  --berry: #ff7fa4;
+  --sky: #7bc9ff;
+  --lavender: #c5b3ff;
+  --success: #3fb887;
+  --warning: #dd9f36;
+  --error: #df7171;
+  --border: rgba(223, 168, 129, 0.34);
+  --border-strong: rgba(214, 151, 116, 0.48);
+  --shadow-card: 0 20px 44px rgba(222, 150, 96, 0.18);
+  --shadow-soft: 0 12px 24px rgba(222, 150, 96, 0.12);
+  --radius-sm: 16px;
+  --radius-md: 22px;
+  --radius-lg: 30px;
+  --radius-xl: 38px;
+  --font: "Microsoft YaHei UI", "Segoe UI Emoji", "Segoe UI", sans-serif;
   --mono: "Cascadia Code", "JetBrains Mono", "Consolas", monospace;
 }
 
@@ -61,612 +42,1010 @@ html, body { height: 100%; overflow: hidden; }
 body {
   font-family: var(--font);
   color: var(--text-primary);
-  background-color: var(--bg-base);
-  background-image:
-    radial-gradient(ellipse 900px 700px at 5% 10%, rgba(13,148,136,0.40), transparent 65%),
-    radial-gradient(ellipse 800px 600px at 95% 85%, rgba(124,58,237,0.35), transparent 65%),
-    radial-gradient(ellipse 500px 500px at 40% 40%, rgba(6,182,212,0.15), transparent 70%),
-    radial-gradient(ellipse 300px 300px at 70% 20%, rgba(236,72,153,0.08), transparent 70%);
-  background-attachment: fixed;
+  background:
+    radial-gradient(circle at 8% 10%, rgba(255, 255, 255, 0.94), transparent 24%),
+    radial-gradient(circle at 88% 14%, rgba(123, 201, 255, 0.34), transparent 24%),
+    radial-gradient(circle at 16% 86%, rgba(115, 213, 189, 0.26), transparent 22%),
+    radial-gradient(circle at 84% 84%, rgba(255, 127, 164, 0.22), transparent 24%),
+    linear-gradient(180deg, #fff8e9 0%, #ffe9cf 54%, #ffefce 100%);
+  position: relative;
 }
 
-/* ── Page grid ── */
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  filter: blur(28px);
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+body::before {
+  top: -120px;
+  right: -80px;
+  background: rgba(123, 201, 255, 0.38);
+}
+
+body::after {
+  bottom: -120px;
+  left: -80px;
+  background: rgba(255, 127, 164, 0.24);
+}
+
 .page {
-  max-width: 1120px;
+  max-width: 1180px;
   margin: 0 auto;
-  padding: 14px 18px 18px;
+  padding: 18px;
+  height: 100vh;
   display: grid;
   grid-template-rows: auto auto 1fr auto;
-  gap: 10px;
-  height: 100vh;
-  max-height: 100vh;
-}
-
-/* ── Glass mixin helpers (via class) ── */
-.glass {
-  background: var(--bg-glass);
-  backdrop-filter: blur(20px) saturate(1.4);
-  -webkit-backdrop-filter: blur(20px) saturate(1.4);
-  border: 1px solid var(--glass-border);
-}
-.glass-heavy {
-  background: var(--bg-glass-heavy);
-  backdrop-filter: blur(24px) saturate(1.5);
-  -webkit-backdrop-filter: blur(24px) saturate(1.5);
-  border: 1px solid var(--glass-border);
-}
-
-/* ── Header ── */
-.app-header {
-  height: 48px;
-  border-radius: var(--radius-md);
-  padding: 0 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  box-shadow: var(--shadow-elevated);
-  color: var(--text-primary);
-}
-.app-header h1 {
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  background: linear-gradient(135deg, var(--accent-bright), var(--text-primary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-.env-status { display: flex; gap: 16px; align-items: center; }
-.env-item { display: flex; align-items: center; gap: 6px; }
-.env-dot {
-  width: 10px; height: 10px; border-radius: 50%;
-  position: relative; display: inline-block;
-}
-.env-dot::before {
-  content: ''; position: absolute; inset: 0;
-  border-radius: 50%; border: 1.5px solid var(--text-muted); opacity: 0.3;
-}
-.env-dot.ok::before { border-color: var(--success); opacity: 0.5; }
-.env-dot.ok::after {
-  content: ''; position: absolute; inset: 2px; border-radius: 50%;
-  background: var(--success); box-shadow: 0 0 6px rgba(74,222,128,0.4);
-}
-.env-dot.warn::before { border-color: var(--warning); opacity: 0.5; }
-.env-dot.warn::after {
-  content: ''; position: absolute; inset: 2px; border-radius: 50%;
-  background: var(--warning); box-shadow: 0 0 6px rgba(251,191,36,0.4);
-}
-.env-dot.error::before { border-color: var(--error); opacity: 0.5; }
-.env-dot.error::after {
-  content: ''; position: absolute; inset: 2px; border-radius: 50%;
-  background: var(--error); box-shadow: 0 0 6px rgba(248,113,113,0.4);
-}
-.env-label { font-size: 11px; color: var(--text-muted); }
-
-/* ── Tab bar ── */
-.tab-bar {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  padding: 6px 16px;
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-resting);
-}
-.tab-btn {
-  padding: 9px 20px;
-  border: none;
-  border-radius: var(--radius-sm);
-  background: transparent;
-  font-family: var(--font);
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-muted);
-  cursor: pointer;
+  gap: 14px;
   position: relative;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 1;
 }
-.tab-btn:hover { color: var(--text-secondary); background: rgba(255,255,255,0.04); }
+
+.glass,
+.glass-heavy {
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.glass-heavy {
+  background: linear-gradient(180deg, rgba(255, 254, 249, 0.95), rgba(255, 249, 238, 0.92));
+}
+
+.app-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(300px, 0.95fr);
+  gap: 18px;
+  padding: 24px 28px;
+  border-radius: var(--radius-xl);
+  position: relative;
+  overflow: hidden;
+}
+
+.app-header::after {
+  content: "";
+  position: absolute;
+  right: -80px;
+  bottom: -120px;
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 127, 164, 0.22) 0%, transparent 70%);
+}
+
+.hero-copy,
+.header-side {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.hero-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.84);
+  border: 1px solid rgba(214, 151, 116, 0.26);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.hero-copy h1 {
+  font-size: clamp(31px, 4vw, 45px);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+.hero-subtitle {
+  max-width: 700px;
+  color: var(--text-secondary);
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.hero-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(223, 168, 129, 0.3);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 900;
+  box-shadow: var(--shadow-soft);
+}
+
+.hero-note {
+  padding: 14px 16px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 236, 188, 0.74));
+  border: 1px solid rgba(222, 169, 132, 0.26);
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.header-side {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.hero-mascot {
+  position: relative;
+  min-height: 194px;
+  padding: 18px;
+  border-radius: 32px;
+  background:
+    radial-gradient(circle at 28% 24%, rgba(255, 255, 255, 0.88), transparent 28%),
+    linear-gradient(135deg, rgba(115, 213, 189, 0.28), rgba(123, 201, 255, 0.26), rgba(255, 127, 164, 0.22));
+  border: 1px solid rgba(214, 151, 116, 0.26);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.hero-mascot::before {
+  content: "";
+  position: absolute;
+  inset: 14px;
+  border-radius: 26px;
+  border: 1px dashed rgba(255, 255, 255, 0.76);
+}
+
+.hero-mascot-image {
+  width: 142px;
+  height: 142px;
+  object-fit: contain;
+  filter: drop-shadow(0 12px 20px rgba(196, 120, 79, 0.18));
+  animation: mascot-bob 3.6s ease-in-out infinite;
+}
+
+.hero-sticker {
+  position: absolute;
+  font-size: 28px;
+  animation: sticker-float 4.2s ease-in-out infinite;
+}
+
+.hero-sticker-a { top: 18px; left: 22px; }
+.hero-sticker-b { top: 30px; right: 26px; animation-delay: 0.8s; }
+.hero-sticker-c { right: 34px; bottom: 20px; animation-delay: 1.6s; }
+
+.env-shell {
+  padding: 14px 16px;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.84);
+  border: 1px solid rgba(223, 168, 129, 0.28);
+}
+
+.env-status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.env-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(223, 168, 129, 0.22);
+}
+
+.env-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(178, 142, 116, 0.64);
+  box-shadow: 0 0 0 7px rgba(178, 142, 116, 0.12);
+}
+
+.env-dot.ok {
+  background: var(--success);
+  box-shadow: 0 0 0 7px rgba(63, 184, 135, 0.18);
+}
+
+.env-dot.warn {
+  background: var(--warning);
+  box-shadow: 0 0 0 7px rgba(221, 159, 54, 0.18);
+}
+
+.env-dot.error {
+  background: var(--error);
+  box-shadow: 0 0 0 7px rgba(223, 113, 113, 0.18);
+}
+
+.env-label {
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.tab-bar {
+  padding: 10px;
+  border-radius: 26px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.tab-btn {
+  appearance: none;
+  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--text-secondary);
+  padding: 13px 18px;
+  border-radius: 18px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 900;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+  box-shadow: inset 0 0 0 1px rgba(223, 168, 129, 0.24);
+}
+
+.tab-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 18px rgba(222, 150, 96, 0.12);
+}
+
 .tab-btn.active {
-  color: var(--accent-bright);
-  background: rgba(45,212,191,0.10);
-  font-weight: 600;
+  color: #6f3d22;
+  background: linear-gradient(135deg, rgba(255, 213, 104, 0.98), rgba(255, 184, 139, 0.94));
+  border-color: rgba(214, 151, 116, 0.28);
+  box-shadow: 0 14px 24px rgba(222, 150, 96, 0.18);
 }
-.tab-btn.active::after {
-  content: ''; position: absolute;
-  bottom: 0; left: 20%; right: 20%; height: 2px;
-  background: var(--accent); border-radius: 1px;
-  box-shadow: 0 0 8px var(--accent-glow);
-}
+
 .tab-badge {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--berry);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 900;
   display: none;
-  min-width: 16px; height: 16px; border-radius: 8px;
-  padding: 0 4px; margin-left: 6px;
-  background: rgba(45,212,191,0.15); border: 1px solid rgba(45,212,191,0.25);
-  color: var(--accent-bright); font-size: 10px; font-weight: 700;
-  vertical-align: middle;
 }
-.tab-badge.visible { display: inline-flex; align-items: center; justify-content: center; }
+
+.tab-badge.visible {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .tab-actions {
   margin-left: auto;
-  display: flex; gap: 6px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
-/* ── Tab content ── */
 .tab-content {
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-glass);
-  overflow: hidden;
   min-height: 0;
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  overflow: hidden;
+  display: flex;
 }
+
 .tab-pane {
   display: none;
-  padding: 22px 24px;
-  height: 100%;
-  overflow-y: auto;
+  width: 100%;
+  min-height: 0;
+  overflow: auto;
+  flex-direction: column;
+  gap: 18px;
+  padding-right: 4px;
 }
-.tab-pane.active { display: block; }
 
-/* ── Panel header ── */
+.tab-pane.active { display: flex; }
+
 .panel-head {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 16px;
+  gap: 16px;
+  flex-wrap: wrap;
 }
+
 .panel-title h2 {
-  font-size: 17px; font-weight: 700; margin-bottom: 4px;
-  color: var(--text-primary);
+  font-size: 28px;
+  font-weight: 900;
+  margin-bottom: 8px;
 }
+
 .panel-title p {
-  font-size: 12px; color: var(--text-muted); line-height: 1.5;
-}
-.panel-actions { display: flex; gap: 6px; flex-shrink: 0; }
-
-/* ── Status banner ── */
-.status-banner {
-  border-radius: var(--radius-md);
-  padding: 14px 16px;
-  display: flex; align-items: flex-start; gap: 12px;
-  background: rgba(255,255,255,0.02);
-  border: 1px solid var(--glass-border);
-  margin-bottom: 14px;
-  transition: all 0.3s ease;
-}
-.status-banner .status-icon {
-  width: 32px; height: 32px; border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0; font-size: 14px; font-weight: 700;
-  background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border);
-  transition: all 0.3s ease;
-}
-.status-banner.success { background: var(--success-soft); border-color: rgba(74,222,128,0.15); }
-.status-banner.success .status-icon { background: rgba(74,222,128,0.12); border-color: rgba(74,222,128,0.20); color: var(--success); box-shadow: 0 0 12px rgba(74,222,128,0.08); }
-.status-banner.warning { background: var(--warning-soft); border-color: rgba(251,191,36,0.15); }
-.status-banner.warning .status-icon { background: rgba(251,191,36,0.12); border-color: rgba(251,191,36,0.20); color: var(--warning); box-shadow: 0 0 12px rgba(251,191,36,0.08); }
-.status-banner.error { background: var(--error-soft); border-color: rgba(248,113,113,0.15); }
-.status-banner.error .status-icon { background: rgba(248,113,113,0.12); border-color: rgba(248,113,113,0.20); color: var(--error); box-shadow: 0 0 12px rgba(248,113,113,0.08); }
-.status-banner.neutral .status-icon { color: var(--text-muted); }
-.status-title { font-size: 13px; font-weight: 600; color: var(--text-primary); }
-.status-detail { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
-
-/* ── Form fields ── */
-.field-grid { margin-bottom: 12px; }
-.field { margin-bottom: 10px; }
-.field label {
-  display: block; font-size: 11px; font-weight: 600;
-  color: var(--text-muted); text-transform: uppercase;
-  letter-spacing: 0.05em; margin-bottom: 5px;
-}
-.field input, .field select {
-  width: 100%; height: 38px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--glass-border);
-  background: var(--bg-input);
-  color: var(--text-primary);
-  padding: 0 12px; font-size: 13px;
-  font-family: var(--font);
-  transition: all 0.2s ease;
-  outline: none;
-}
-.field select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2364748b'%3E%3Cpath d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
-.field select option { background: #161b22; color: var(--text-primary); }
-.field input:focus, .field select:focus {
-  border-color: rgba(45,212,191,0.4);
-  background: var(--bg-input-focus);
-  box-shadow: 0 0 0 3px rgba(45,212,191,0.08);
-}
-.field input[readonly] { opacity: 0.7; cursor: default; }
-.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.helper-text { font-size: 11px; color: var(--text-muted); margin-top: 3px; line-height: 1.4; }
-
-/* ── Buttons ── */
-.btn {
-  height: 34px; border-radius: var(--radius-sm);
-  padding: 0 14px; font-size: 12px; font-weight: 600;
-  font-family: var(--font); cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  border: 1px solid transparent;
-  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-}
-.btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none !important; }
-.btn-primary {
-  background: linear-gradient(135deg, var(--accent-dim), #0d9488);
-  color: #ecfdf5; border: 1px solid rgba(45,212,191,0.25);
-  box-shadow: 0 4px 12px rgba(15,118,110,0.30), inset 0 1px 0 rgba(255,255,255,0.10);
-}
-.btn-primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, #0d9488, var(--accent));
-  box-shadow: 0 6px 20px rgba(45,212,191,0.35), inset 0 1px 0 rgba(255,255,255,0.15);
-  transform: translateY(-1px);
-}
-.btn-secondary {
-  background: rgba(255,255,255,0.05);
   color: var(--text-secondary);
-  border: 1px solid var(--glass-border);
-}
-.btn-secondary:hover:not(:disabled) {
-  background: rgba(255,255,255,0.08);
-  border-color: var(--glass-border-hover);
-  color: var(--text-primary);
-  transform: translateY(-1px);
-}
-.btn-danger {
-  background: rgba(248,113,113,0.12);
-  color: var(--error);
-  border: 1px solid rgba(248,113,113,0.20);
-}
-.btn-danger:hover:not(:disabled) {
-  background: rgba(248,113,113,0.20);
-  transform: translateY(-1px);
-}
-.btn-soft {
-  background: rgba(255,255,255,0.08);
-  color: var(--text-primary);
-  border: 1px solid var(--glass-border);
-}
-.btn-warning {
-  background: rgba(251,191,36,0.12);
-  color: var(--warning);
-  border: 1px solid rgba(251,191,36,0.20);
-}
-.btn-warning:hover:not(:disabled) {
-  background: rgba(251,191,36,0.20);
-  transform: translateY(-1px);
+  font-size: 14px;
+  line-height: 1.8;
+  max-width: 720px;
 }
 
-.extract-actions { display: flex; gap: 8px; align-items: center; margin-top: 12px; }
-.inline-actions { display: flex; gap: 8px; align-items: center; }
-
-/* ── Progress ── */
-.progress-wrap { margin-top: 12px; }
-.progress-track {
-  height: 6px; border-radius: 3px;
-  background: rgba(255,255,255,0.06);
-  overflow: hidden;
-}
-.progress-fill {
-  height: 100%; border-radius: inherit;
-  background: linear-gradient(90deg, var(--accent-dim), var(--accent));
-  box-shadow: 0 0 8px var(--accent-glow);
-  transition: width 0.3s ease;
-  position: relative;
-}
-.progress-fill::after {
-  content: ''; position: absolute; inset: 0;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
-  animation: shimmer 2s ease-in-out infinite;
-}
-@keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(200%); } }
-.progress-meta {
-  display: flex; justify-content: space-between;
-  font-size: 11px; color: var(--text-muted); margin-top: 6px;
-}
-.progress-filename { font-family: var(--mono); font-size: 11px; }
-
-/* ── Pause banner ── */
-.pause-banner {
-  display: none;
-  margin-top: 10px; padding: 10px 14px;
-  border-radius: var(--radius-sm);
-  background: rgba(251,191,36,0.06);
-  border: 1px solid rgba(251,191,36,0.12);
-  color: var(--warning);
-  font-size: 12px;
-}
-.pause-banner.visible { display: block; }
-
-/* ── Audit banner ── */
-.audit-banner {
-  padding: 10px 14px;
-  border-radius: var(--radius-sm);
-  background: rgba(255,255,255,0.02);
-  border: 1px solid var(--glass-border);
-  margin-bottom: 12px;
-}
-.audit-banner.success { background: var(--success-soft); border-color: rgba(74,222,128,0.15); }
-.audit-banner.warning { background: var(--warning-soft); border-color: rgba(251,191,36,0.15); }
-.audit-banner.error { background: var(--error-soft); border-color: rgba(248,113,113,0.15); }
-.audit-title { font-size: 13px; font-weight: 600; color: var(--text-primary); }
-.audit-detail { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
-
-/* ── Mode cards ── */
-.mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
-.mode-card {
-  padding: 14px 16px; border-radius: var(--radius-md);
-  border: 1px solid var(--glass-border);
-  background: rgba(255,255,255,0.02);
-  cursor: pointer; transition: all 0.2s ease;
-  position: relative;
-}
-.mode-card input { position: absolute; opacity: 0; pointer-events: none; }
-.mode-card:hover { background: rgba(255,255,255,0.04); border-color: var(--glass-border-hover); }
-.mode-card.active {
-  background: rgba(45,212,191,0.08);
-  border-color: rgba(45,212,191,0.25);
-  box-shadow: 0 0 0 1px rgba(45,212,191,0.10);
-}
-.mode-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
-.mode-detail { font-size: 11px; color: var(--text-secondary); margin-top: 4px; }
-
-/* ── Preview ── */
-.preview-toolbar {
-  display: flex; justify-content: space-between;
-  align-items: center; margin-bottom: 10px;
-}
-.selection-hint { font-size: 12px; color: var(--text-secondary); }
-.grid-actions { display: flex; gap: 6px; }
-
-.emoji-wrap {
-  border-radius: var(--radius-md);
-  border: 1px solid var(--glass-border);
-  background: rgba(255,255,255,0.01);
-  padding: 12px;
-  max-height: calc(100% - 120px);
-  overflow-y: auto;
-}
-.emoji-empty {
-  text-align: center; padding: 40px 20px;
-  color: var(--text-muted); font-size: 13px; line-height: 1.8;
-}
-.emoji-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+.panel-actions {
+  display: flex;
   gap: 10px;
+  flex-wrap: wrap;
 }
-.emoji-card {
-  border-radius: var(--radius-md);
-  background: rgba(255,255,255,0.03);
-  border: 1px solid var(--glass-border);
-  padding: 10px;
+
+.btn {
+  appearance: none;
+  border: none;
+  min-height: 46px;
+  padding: 0 18px;
+  border-radius: 16px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 900;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.emoji-card:hover {
-  background: rgba(255,255,255,0.06);
-  border-color: var(--glass-border-hover);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-glass);
-}
-.emoji-card.selected {
-  background: rgba(45,212,191,0.08);
-  border-color: rgba(45,212,191,0.25);
-  box-shadow: var(--shadow-glass), 0 0 0 1px rgba(45,212,191,0.10);
-}
-.emoji-thumb {
-  width: 100%; aspect-ratio: 1;
-  display: flex; align-items: center; justify-content: center;
-  border-radius: var(--radius-sm);
-  background: rgba(255,255,255,0.02);
-  margin-bottom: 8px; overflow: hidden;
-}
-.emoji-thumb img { max-width: 72px; max-height: 72px; object-fit: contain; }
-.emoji-name {
-  font-size: 11px; color: var(--text-primary);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.emoji-size { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
-
-/* ── Upload ── */
-.upload-status-text { color: var(--text-muted); font-size: 12px; line-height: 1.5; margin-top: 10px; }
-.pack-name-row { margin-top: 10px; }
-
-/* ── Divider ── */
-.divider {
-  height: 1px;
-  background: var(--glass-border);
-  margin: 14px 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: transform 160ms ease, box-shadow 160ms ease, opacity 160ms ease;
+  box-shadow: var(--shadow-soft);
 }
 
-/* ── Log drawer ── */
-.log-drawer {
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-resting);
-  overflow: hidden;
-  max-height: 36px;
-  transition: max-height 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.log-drawer.expanded { max-height: 200px; }
-.log-drawer-header {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 0 14px; height: 36px;
-  cursor: pointer; font-size: 12px; color: var(--text-muted);
-  user-select: none;
-}
-.log-drawer-header:hover { color: var(--text-secondary); }
-.log-drawer-arrow {
-  display: inline-block; margin-right: 6px;
-  transition: transform 0.2s ease; font-size: 10px;
-}
-.log-drawer.expanded .log-drawer-arrow { transform: rotate(90deg); }
-.log-area {
-  height: 160px; overflow-y: auto;
-  padding: 0 14px 10px;
-  font-family: var(--mono); font-size: 11px; line-height: 1.7;
-}
-.log-line { display: flex; gap: 8px; }
-.log-time { color: var(--text-muted); white-space: nowrap; }
-.log-message { color: var(--text-secondary); word-break: break-all; }
-.log-line.error .log-message { color: var(--error); }
-.log-line.warn .log-message { color: var(--warning); }
-.log-line.success .log-message { color: var(--success); }
+.btn:hover:not(:disabled) { transform: translateY(-2px); }
 
-/* ── Upload step indicator ── */
-.upload-steps {
-  display: flex; gap: 0; margin-bottom: 16px;
-  border-radius: var(--radius-sm);
-  overflow: hidden;
-  border: 1px solid var(--glass-border);
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
 }
-.upload-step {
-  flex: 1; padding: 10px 12px;
-  font-size: 12px; font-weight: 500;
-  color: var(--text-muted);
-  background: rgba(255,255,255,0.02);
-  display: flex; align-items: center; gap: 8px;
-  transition: all 0.3s ease;
+
+.btn-primary {
+  color: #66391e;
+  background: linear-gradient(135deg, rgba(255, 213, 104, 0.98), rgba(255, 184, 139, 0.98));
 }
-.upload-step + .upload-step { border-left: 1px solid var(--glass-border); }
-.upload-step .step-num {
-  width: 20px; height: 20px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 10px; font-weight: 700;
-  background: rgba(255,255,255,0.06); border: 1px solid var(--glass-border);
+
+.btn-secondary {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(223, 168, 129, 0.24);
+}
+
+.btn-warning {
+  color: #7a5115;
+  background: linear-gradient(135deg, rgba(255, 225, 127, 0.98), rgba(255, 193, 114, 0.96));
+}
+
+.btn-soft {
+  color: #2c5b65;
+  background: linear-gradient(135deg, rgba(123, 201, 255, 0.92), rgba(115, 213, 189, 0.92));
+}
+
+.btn-danger {
+  color: #7b2f42;
+  background: linear-gradient(135deg, rgba(255, 162, 180, 0.96), rgba(255, 196, 168, 0.96));
+}
+
+.status-banner {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 16px 18px;
+  border-radius: 24px;
+  border: 1px solid rgba(223, 168, 129, 0.22);
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: var(--shadow-soft);
+}
+
+.status-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  background: rgba(123, 201, 255, 0.18);
+  font-size: 24px;
   flex-shrink: 0;
 }
+
+.status-banner.success .status-icon { background: rgba(115, 213, 189, 0.22); }
+.status-banner.warning .status-icon { background: rgba(255, 213, 104, 0.24); }
+.status-banner.error .status-icon { background: rgba(255, 162, 180, 0.22); }
+
+.status-title {
+  font-size: 15px;
+  font-weight: 900;
+  color: var(--text-primary);
+}
+
+.status-detail {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  line-height: 1.7;
+}
+
+.field-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 900;
+  color: var(--text-secondary);
+}
+
+.field input,
+.field select {
+  width: 100%;
+  min-height: 50px;
+  border-radius: 16px;
+  border: 1px solid rgba(223, 168, 129, 0.28);
+  background: rgba(255, 255, 255, 0.88);
+  color: var(--text-primary);
+  padding: 0 16px;
+  font: inherit;
+  font-size: 14px;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.field input:focus,
+.field select:focus {
+  outline: none;
+  border-color: rgba(56, 183, 152, 0.72);
+  box-shadow: 0 0 0 4px rgba(115, 213, 189, 0.18);
+}
+
+.helper-text {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+
+.extract-actions,
+.inline-actions,
+.grid-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.progress-wrap {
+  padding: 18px;
+  border-radius: 24px;
+  border: 1px dashed rgba(214, 151, 116, 0.34);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(255, 245, 228, 0.86));
+}
+
+.progress-track {
+  width: 100%;
+  height: 16px;
+  border-radius: 999px;
+  background: rgba(228, 185, 154, 0.24);
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.progress-fill {
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--mint-deep), var(--sky), var(--berry));
+  transition: width 120ms linear;
+}
+
+.progress-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.progress-filename {
+  color: var(--text-primary);
+  font-weight: 900;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 70%;
+}
+
+.pause-banner {
+  display: none;
+  padding: 14px 18px;
+  border-radius: 22px;
+  border: 1px solid rgba(221, 159, 54, 0.28);
+  background: rgba(255, 229, 154, 0.52);
+  color: #875926;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.8;
+}
+
+.pause-banner.visible { display: block; }
+
+.preview-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.selection-hint {
+  padding: 14px 16px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.76);
+  border: 1px solid rgba(223, 168, 129, 0.22);
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.emoji-wrap {
+  min-height: 0;
+  flex: 1;
+  padding: 18px;
+  border-radius: 28px;
+  border: 1px dashed rgba(214, 151, 116, 0.32);
+  background:
+    radial-gradient(circle at 12% 12%, rgba(255, 255, 255, 0.92), transparent 20%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(255, 246, 233, 0.92));
+  overflow: auto;
+}
+
+.emoji-empty {
+  min-height: 260px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 15px;
+  line-height: 1.9;
+}
+
+.emoji-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 14px;
+}
+
+.emoji-card {
+  padding: 14px;
+  border-radius: 24px;
+  border: 1px solid rgba(223, 168, 129, 0.24);
+  background: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  transition: transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease, background 140ms ease;
+  box-shadow: var(--shadow-soft);
+}
+
+.emoji-card:hover {
+  transform: translateY(-4px) rotate(-0.6deg);
+  border-color: rgba(214, 151, 116, 0.4);
+}
+
+.emoji-card.selected {
+  border-color: rgba(56, 183, 152, 0.36);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(229, 255, 246, 0.92));
+  box-shadow: 0 14px 24px rgba(115, 213, 189, 0.18);
+}
+
+.emoji-thumb {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  display: grid;
+  place-items: center;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(255, 245, 221, 0.96), rgba(255, 232, 210, 0.92));
+  margin-bottom: 12px;
+}
+
+.emoji-thumb img {
+  max-width: 78px;
+  max-height: 78px;
+  object-fit: contain;
+}
+
+.emoji-name {
+  font-size: 13px;
+  font-weight: 900;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.emoji-size {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.upload-steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.upload-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: 22px;
+  border: 1px solid rgba(223, 168, 129, 0.22);
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 900;
+}
+
 .upload-step.active {
-  color: var(--accent-bright);
-  background: rgba(45,212,191,0.08);
-}
-.upload-step.active .step-num {
-  background: var(--accent); color: #ecfdf5; border-color: transparent;
-  box-shadow: 0 0 8px var(--accent-glow);
-}
-.upload-step.done { color: var(--success); }
-.upload-step.done .step-num {
-  background: var(--success); color: #ecfdf5; border-color: transparent;
+  color: #6f3d22;
+  border-color: rgba(214, 151, 116, 0.32);
+  background: linear-gradient(135deg, rgba(255, 213, 104, 0.94), rgba(255, 184, 139, 0.9));
+  box-shadow: var(--shadow-soft);
 }
 
-/* ── Guide card (shown before critical actions) ── */
+.upload-step.done {
+  color: var(--text-primary);
+  background: rgba(221, 255, 244, 0.72);
+}
+
+.step-num {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.92);
+  font-size: 12px;
+}
+
+.mode-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.mode-card {
+  padding: 18px;
+  border-radius: 24px;
+  border: 1px solid rgba(223, 168, 129, 0.22);
+  background: rgba(255, 255, 255, 0.82);
+  cursor: pointer;
+  position: relative;
+  min-height: 156px;
+  box-shadow: var(--shadow-soft);
+  transition: transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease;
+}
+
+.mode-card input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.mode-card:hover {
+  transform: translateY(-3px) rotate(-0.4deg);
+}
+
+.mode-card.active {
+  border-color: rgba(56, 183, 152, 0.38);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(229, 255, 246, 0.94));
+}
+
+.mode-title {
+  margin: 8px 0 6px;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.mode-detail {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+
 .guide-card {
-  border-radius: var(--radius-md);
-  padding: 16px 18px;
-  margin-bottom: 14px;
-  border: 1px solid rgba(251,191,36,0.20);
-  background: rgba(251,191,36,0.06);
+  padding: 18px;
+  border-radius: 24px;
+  border: 1px solid rgba(223, 168, 129, 0.22);
+  background: rgba(255, 255, 255, 0.76);
+  box-shadow: var(--shadow-soft);
 }
+
 .guide-card h3 {
-  font-size: 13px; font-weight: 700;
-  color: var(--warning); margin-bottom: 8px;
+  font-size: 18px;
+  font-weight: 900;
+  margin-bottom: 10px;
+  color: #7b4a2e;
 }
+
 .guide-card ul {
-  list-style: none; padding: 0;
-  font-size: 12px; color: var(--text-secondary); line-height: 2;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.8;
 }
-.guide-card li::before { content: '→ '; color: var(--warning); }
+
+.guide-card li {
+  position: relative;
+  padding-left: 26px;
+}
+
+.guide-card li::before {
+  content: "🌟";
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
 .guide-card.info {
-  border-color: rgba(45,212,191,0.20);
-  background: rgba(45,212,191,0.06);
+  background: linear-gradient(135deg, rgba(231, 255, 247, 0.88), rgba(245, 250, 255, 0.88));
 }
-.guide-card.info h3 { color: var(--accent-bright); }
-.guide-card.info li::before { content: '✓ '; color: var(--accent); }
 
-/* ── Live status line ── */
+.guide-card.info li::before { content: "🪄"; }
+
+.mode-icon {
+  font-size: 30px;
+}
+
 .live-status {
-  padding: 10px 14px; border-radius: var(--radius-sm);
-  background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border);
-  margin-bottom: 12px; font-size: 12px;
-  display: flex; align-items: center; gap: 8px;
-  min-height: 40px;
+  padding: 12px 16px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(223, 168, 129, 0.22);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 800;
 }
-.live-status .pulse-dot {
-  width: 8px; height: 8px; border-radius: 50%;
-  background: var(--accent); flex-shrink: 0;
-  animation: pulse-dot-anim 1.5s ease-in-out infinite;
-}
-@keyframes pulse-dot-anim {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(0.8); }
-}
-.live-status.idle .pulse-dot { background: var(--text-muted); animation: none; }
 
-/* ── Misc ── */
+.live-status .pulse-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--mint-deep);
+  box-shadow: 0 0 0 7px rgba(115, 213, 189, 0.18);
+  animation: pulse-dot-anim 1.7s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+.live-status.idle .pulse-dot {
+  background: rgba(178, 142, 116, 0.72);
+  box-shadow: none;
+  animation: none;
+}
+
+.log-drawer {
+  border-radius: 24px;
+  padding: 0 16px 16px;
+  max-height: 56px;
+  overflow: hidden;
+  transition: max-height 180ms ease;
+}
+
+.log-drawer.expanded { max-height: 260px; }
+
+.log-drawer-header {
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: pointer;
+  color: var(--text-primary);
+  font-weight: 900;
+}
+
+.log-drawer-header:hover { color: #6f4934; }
+
+.log-drawer-arrow {
+  display: inline-block;
+  margin-right: 6px;
+  transition: transform 160ms ease;
+}
+
+.log-drawer.expanded .log-drawer-arrow { transform: rotate(90deg); }
+
+.log-area {
+  height: 180px;
+  overflow: auto;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.9;
+  background: rgba(255, 255, 255, 0.52);
+  border-radius: 18px;
+  padding: 12px 14px;
+  border: 1px solid rgba(223, 168, 129, 0.18);
+}
+
+.log-line {
+  display: flex;
+  gap: 8px;
+}
+
+.log-time {
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.log-message { color: var(--text-secondary); }
+.log-line.error .log-message { color: #c45162; }
+.log-line.warn .log-message { color: #b4781f; }
+.log-line.success .log-message { color: #2f9773; }
+
 .hidden { display: none !important; }
 
-/* ── Responsive ── */
-@media (max-width: 860px) {
-  .field-row { grid-template-columns: 1fr; }
-  .emoji-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@keyframes pulse-dot-anim {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.82); }
 }
 
-/* ── Scrollbar ── */
-::-webkit-scrollbar { width: 6px; }
+@keyframes mascot-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes sticker-float {
+  0%, 100% { transform: translateY(0) rotate(-4deg); }
+  50% { transform: translateY(-8px) rotate(6deg); }
+}
+
+@media (max-width: 980px) {
+  .page { padding: 14px; }
+  .app-header { grid-template-columns: 1fr; }
+  .tab-actions { margin-left: 0; width: 100%; }
+  .field-row,
+  .mode-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 720px) {
+  .tab-content { padding: 18px; }
+  .hero-copy h1 { font-size: 28px; }
+  .upload-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .emoji-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .progress-meta,
+  .preview-toolbar,
+  .panel-head {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.14); }
+::-webkit-scrollbar-thumb {
+  background: rgba(214, 151, 116, 0.36);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(214, 151, 116, 0.52);
+}
 </style>
 </head>
 <body>
 <div class="page">
-
-  <!-- Header -->
   <header class="app-header glass-heavy">
-    <h1>微信表情包 → 飞书</h1>
-    <div class="env-status">
-      <div class="env-item">
-        <span class="env-dot" id="dotWechat"></span>
-        <span class="env-label">微信</span>
+    <div class="hero-copy">
+      <div class="hero-kicker">🎨 CARTOON EMOJI STUDIO</div>
+      <h1>微信表情乐园 → 飞书贴纸站</h1>
+      <p class="hero-subtitle">把微信里的可爱表情，一路导出、挑选、打包，再送进飞书。界面这次换成了更像贴纸盲盒的风格，操作更轻，心情也更好一点。</p>
+      <div class="hero-badges">
+        <span class="hero-badge">🧃 一键导出</span>
+        <span class="hero-badge">🧸 批量挑选</span>
+        <span class="hero-badge">🚀 飞书导入</span>
+        <span class="hero-badge">🌈 Windows 新图标</span>
       </div>
-      <div class="env-item">
-        <span class="env-dot" id="dotEnv"></span>
-        <span class="env-label">环境</span>
+      <div class="hero-note">💡 小提醒：导出、预览、导入可以分步进行，已经整理好的表情会一直保留在预览区，随时回来继续。</div>
+    </div>
+    <div class="header-side">
+      <div class="hero-mascot" aria-hidden="true">
+        <img src="./assets/app-mascot.png" alt="" class="hero-mascot-image">
+        <span class="hero-sticker hero-sticker-a">✨</span>
+        <span class="hero-sticker hero-sticker-b">🎉</span>
+        <span class="hero-sticker hero-sticker-c">💬</span>
       </div>
-      <div class="env-item">
-        <span class="env-dot" id="dotExtract"></span>
-        <span class="env-label" id="labelExtract">导出</span>
+      <div class="env-shell">
+        <div class="env-status">
+          <div class="env-item">
+            <span class="env-dot" id="dotWechat"></span>
+            <span class="env-label">💚 微信</span>
+          </div>
+          <div class="env-item">
+            <span class="env-dot" id="dotEnv"></span>
+            <span class="env-label">🧪 环境</span>
+          </div>
+          <div class="env-item">
+            <span class="env-dot" id="dotExtract"></span>
+            <span class="env-label" id="labelExtract">📦 导出</span>
+          </div>
+        </div>
       </div>
     </div>
   </header>
 
-  <!-- Tab bar -->
   <div class="tab-bar glass">
     <button class="tab-btn active" data-tab="extract" onclick="switchTab('extract')">
-      导出微信
+      🪄 导出微信
       <span class="tab-badge" id="badgePreview"></span>
     </button>
     <button class="tab-btn" data-tab="preview" onclick="switchTab('preview')">
-      预览选择
+      🧸 预览挑选
     </button>
     <button class="tab-btn" data-tab="upload" onclick="switchTab('upload')">
-      导入飞书
+      🚀 导入飞书
       <span class="tab-badge" id="badgeUpload"></span>
     </button>
     <div class="tab-actions">
-      <button class="btn btn-secondary" id="btnRunAudit" onclick="callApi('runAudit')">运行诊断</button>
-      <button class="btn btn-secondary" id="btnOpenOutputDir" onclick="callApi('openOutputDir')">打开目录</button>
+      <button class="btn btn-secondary" id="btnRunAudit" onclick="callApi('runAudit')">🩺 运行诊断</button>
+      <button class="btn btn-secondary" id="btnOpenOutputDir" onclick="callApi('openOutputDir')">📂 打开目录</button>
     </div>
   </div>
 
-  <!-- Tab content -->
   <div class="tab-content glass">
-
-    <!-- Tab: Export -->
     <div class="tab-pane active" id="tabExtract">
       <div class="panel-head">
         <div class="panel-title">
-          <h2>从微信导出表情</h2>
-          <p>自动检测微信账号，解密数据库并多线程下载。可随时暂停。</p>
+          <h2>🪄 从微信捞出表情宝藏</h2>
+          <p>自动检测微信账号，解密数据库并并发下载表情。中途需要停一下也没关系，随时可以暂停和继续。</p>
         </div>
         <div class="panel-actions">
-          <button class="btn btn-secondary" id="btnRefreshWechat" onclick="callApi('detectWechat')">刷新检测</button>
-          <button class="btn btn-secondary" id="btnBrowseWechat" onclick="callApi('browseWechatDir')">浏览目录</button>
+          <button class="btn btn-secondary" id="btnRefreshWechat" onclick="callApi('detectWechat')">🔄 刷新检测</button>
+          <button class="btn btn-secondary" id="btnBrowseWechat" onclick="callApi('browseWechatDir')">🧭 浏览目录</button>
         </div>
       </div>
 
       <div class="status-banner neutral" id="wechatStatusCard">
-        <div class="status-icon">?</div>
+        <div class="status-icon">🧭</div>
         <div>
-          <div class="status-title" id="wechatStatusTitle">正在检测微信</div>
-          <div class="status-detail" id="wechatStatusDetail">等待后台返回账号信息。</div>
+          <div class="status-title" id="wechatStatusTitle">正在寻找微信账号</div>
+          <div class="status-detail" id="wechatStatusDetail">稍等一下，后台正在读取微信目录和当前登录状态。</div>
         </div>
       </div>
 
@@ -676,24 +1055,24 @@ body {
           <select id="userSelect" onchange="handleUserChange()">
             <option value="">尚未检测到微信账号</option>
           </select>
-          <div class="helper-text">确认微信已登录，或点"浏览目录"手动选择数据目录。</div>
+          <div class="helper-text">确认微信已经登录；如果自动检测不到，也可以手动指定数据目录。</div>
         </div>
         <div class="field-row">
           <div class="field">
             <label for="dbPath">表情数据库</label>
-            <input id="dbPath" readonly value="等待检测">
+            <input id="dbPath" readonly value="等待检测...">
           </div>
           <div class="field">
-            <label for="outputDir">输出目录</label>
+            <label for="outputDir">导出目录</label>
             <input id="outputDir" readonly value="">
           </div>
         </div>
       </div>
 
       <div class="extract-actions">
-        <button class="btn btn-secondary" onclick="callApi('browseOutputDir')">更改目录</button>
-        <button class="btn btn-primary" id="btnExtract" onclick="callApi('startExtract')">开始导出</button>
-        <button class="btn btn-warning hidden" id="btnPause" onclick="callApi('pauseExtract')">暂停</button>
+        <button class="btn btn-secondary" onclick="callApi('browseOutputDir')">🗂️ 更改目录</button>
+        <button class="btn btn-primary" id="btnExtract" onclick="callApi('startExtract')">🪄 开始导出</button>
+        <button class="btn btn-warning hidden" id="btnPause" onclick="callApi('pauseExtract')">⏸️ 暂停</button>
       </div>
 
       <div class="progress-wrap">
@@ -704,45 +1083,41 @@ body {
         </div>
       </div>
 
-      <div class="pause-banner" id="pauseBanner">
-        导出已暂停。当前已导出的文件会显示在预览中；点「继续」恢复导出。
-      </div>
+      <div class="pause-banner" id="pauseBanner">⏸️ 导出已经暂停，已完成的表情会保留在预览区，点「继续」就会接着跑。</div>
     </div>
 
-    <!-- Tab: Preview -->
     <div class="tab-pane" id="tabPreview">
       <div class="panel-head">
         <div class="panel-title">
-          <h2>预览与管理</h2>
-          <p>从微信导出或本地目录加载表情，选择后可导入飞书。</p>
+          <h2>🧸 预览与挑选</h2>
+          <p>把导出的表情像贴纸墙一样摊开，勾出你真正想带进飞书的那一批，也支持直接加载本地图片。</p>
         </div>
         <div class="panel-actions">
-          <button class="btn btn-primary" id="btnPickFiles" onclick="callApi('loadEmojiFiles')">选择图片</button>
-          <button class="btn btn-secondary" id="btnLoadFolder" onclick="callApi('loadFromFolder')">从目录加载</button>
+          <button class="btn btn-primary" id="btnPickFiles" onclick="callApi('loadEmojiFiles')">🖼️ 选择图片</button>
+          <button class="btn btn-secondary" id="btnLoadFolder" onclick="callApi('loadFromFolder')">📁 从目录加载</button>
         </div>
       </div>
 
       <div class="preview-toolbar">
-        <div class="selection-hint" id="emojiCount">共 0 个，已选 0 个。</div>
+        <div class="selection-hint" id="emojiCount">🎈 共 0 个，已选 0 个。</div>
         <div class="grid-actions">
-          <button class="btn btn-secondary" id="btnSelectAll" onclick="selectAllEmojis()">全选</button>
-          <button class="btn btn-secondary" id="btnClearSelection" onclick="clearEmojiSelection()">清空</button>
+          <button class="btn btn-secondary" id="btnSelectAll" onclick="selectAllEmojis()">✅ 全选</button>
+          <button class="btn btn-secondary" id="btnClearSelection" onclick="clearEmojiSelection()">🧹 清空</button>
         </div>
       </div>
-      <div class="selection-hint" id="selectionHint" style="margin-bottom:10px">导出成功后会在这里显示表情预览。已有文件可点「从目录加载」。</div>
+
+      <div class="selection-hint" id="selectionHint">🧺 导出完成后，这里会铺满你的表情贴纸；如果已经有图片，也可以直接从本地目录加载。</div>
 
       <div class="emoji-wrap">
         <div class="emoji-empty" id="emojiEmpty">
-          这里会显示表情缩略图。<br>
-          如果已有表情文件，直接点「从目录加载」或「选择图片」。
+          🧸 这里会排满你的表情缩略图。<br>
+          如果已经有图片，也可以直接点「从目录加载」或「选择图片」。
         </div>
         <div class="emoji-grid hidden" id="emojiGrid"></div>
       </div>
     </div>
 
-    <!-- Tab: Upload -->
     <div class="tab-pane" id="tabUpload">
-      <!-- Step indicator -->
       <div class="upload-steps">
         <div class="upload-step active" id="uploadStep1">
           <span class="step-num">1</span><span>准备</span>
@@ -758,68 +1133,68 @@ body {
         </div>
       </div>
 
-      <!-- Step 1: Preparation -->
       <div id="uploadPhase1">
         <div class="panel-head">
           <div class="panel-title">
-            <h2>导入飞书</h2>
-            <p>将选中的表情上传到飞书个人或企业表情库。</p>
+            <h2>🚀 导入飞书贴纸站</h2>
+            <p>把你挑好的表情送进飞书，支持个人表情和企业表情包两种模式。先检查环境，再出发会更稳。</p>
           </div>
           <div class="panel-actions">
-            <button class="btn btn-secondary" id="btnCheckUploadEnv" onclick="callApi('checkUploadEnv')">检查环境</button>
+            <button class="btn btn-secondary" id="btnCheckUploadEnv" onclick="callApi('checkUploadEnv')">🩺 检查环境</button>
           </div>
         </div>
 
         <div class="status-banner neutral" id="uploadEnvCard">
-          <div class="status-icon">?</div>
+          <div class="status-icon">🧪</div>
           <div>
             <div class="status-title" id="uploadEnvTitle">尚未检查上传环境</div>
-            <div class="status-detail" id="uploadEnvDetail">点击「检查环境」确认 Playwright 和 Chromium 已就绪。</div>
+            <div class="status-detail" id="uploadEnvDetail">点击「检查环境」确认 Playwright 和 Chromium 都已经就绪。</div>
           </div>
         </div>
 
         <div class="guide-card info" id="uploadGuide">
-          <h3>操作流程预览</h3>
+          <h3>🎠 上手路线图</h3>
           <ul>
-            <li>点击「检查环境」确认浏览器环境就绪</li>
-            <li>选择上传模式（个人 / 企业）</li>
-            <li>点击「开始导入」— 将自动弹出浏览器窗口</li>
-            <li>首次使用需在浏览器中扫码登录飞书</li>
-            <li>登录后工具自动逐个上传表情，全程无需手动操作</li>
+            <li>先点「检查环境」，确认浏览器运行环境已经准备好。</li>
+            <li>再选择上传模式：个人表情更轻量，企业表情包更适合团队统一使用。</li>
+            <li>点击「开始导入飞书」后，会自动拉起浏览器窗口。</li>
+            <li>首次使用通常需要扫码登录飞书，登录完成后工具会自动继续。</li>
+            <li>上传过程中你只需要看进度，不需要手动一张张处理。</li>
           </ul>
         </div>
 
         <div class="mode-grid">
           <label class="mode-card active" id="modeCardPersonal">
             <input type="radio" name="mode" value="personal" checked onchange="setMode(this.value)">
+            <div class="mode-icon">💬</div>
             <div class="mode-title">个人表情</div>
-            <div class="mode-detail">逐个上传为自定义贴纸，无需权限。</div>
+            <div class="mode-detail">逐个上传成自己的自定义贴纸，不需要管理员权限，适合个人收藏。</div>
           </label>
           <label class="mode-card" id="modeCardEnterprise">
             <input type="radio" name="mode" value="enterprise" onchange="setMode(this.value)">
+            <div class="mode-icon">🏢</div>
             <div class="mode-title">企业表情包</div>
-            <div class="mode-detail">需要管理员权限，每组 6-50 个。</div>
+            <div class="mode-detail">需要管理员权限，会按 6 到 50 个一组打包上传，适合团队统一使用。</div>
           </label>
         </div>
 
         <div class="field hidden" id="packNameRow">
-          <label for="packName">表情包名称</label>
-          <input id="packName" value="微信表情包" placeholder="例如：微信迁移_第一批">
+          <label for="packName">企业表情包名称</label>
+          <input id="packName" value="微信表情乐园" placeholder="例如：办公室夸夸群第 1 弹">
         </div>
 
-        <div class="inline-actions" style="margin-top:8px">
-          <button class="btn btn-primary" id="btnUpload" onclick="callApi('startUpload')">开始导入飞书</button>
+        <div class="inline-actions">
+          <button class="btn btn-primary" id="btnUpload" onclick="callApi('startUpload')">🚀 开始导入飞书</button>
         </div>
       </div>
 
-      <!-- Step 2-3: In progress (hidden until upload starts) -->
       <div id="uploadPhaseProgress" class="hidden">
         <div class="guide-card" id="browserWarning">
-          <h3>浏览器窗口已弹出</h3>
+          <h3>🛟 浏览器小助手已经出发</h3>
           <ul>
-            <li>请不要关闭弹出的浏览器窗口</li>
-            <li>如果需要扫码，请在浏览器中完成飞书登录</li>
-            <li>登录后工具会自动继续，无需任何手动操作</li>
+            <li>请不要关闭自动弹出的浏览器窗口。</li>
+            <li>如果需要扫码，就在浏览器里完成飞书登录。</li>
+            <li>登录完成后工具会自动继续上传，不需要额外点按钮。</li>
           </ul>
         </div>
 
@@ -836,38 +1211,34 @@ body {
           </div>
         </div>
 
-        <div class="inline-actions" style="margin-top:10px">
-          <button class="btn btn-danger" id="btnStopUpload" onclick="callApi('stopUpload')">停止上传</button>
+        <div class="inline-actions">
+          <button class="btn btn-danger hidden" id="btnStopUpload" onclick="callApi('stopUpload')">🛑 停止上传</button>
         </div>
       </div>
 
-      <!-- Step 4: Done (hidden until upload completes) -->
       <div id="uploadPhaseDone" class="hidden">
         <div class="status-banner neutral" id="uploadResultCard">
-          <div class="status-icon">?</div>
+          <div class="status-icon">🎁</div>
           <div>
-            <div class="status-title" id="uploadResultTitle">上传完成</div>
+            <div class="status-title" id="uploadResultTitle">导入完成</div>
             <div class="status-detail" id="uploadResultDetail"></div>
           </div>
         </div>
-        <div class="inline-actions" style="margin-top:10px">
-          <button class="btn btn-primary" onclick="resetUploadPhase()">再次上传</button>
+        <div class="inline-actions">
+          <button class="btn btn-primary" onclick="resetUploadPhase()">🎀 再传一轮</button>
         </div>
       </div>
-
     </div>
   </div>
 
-  <!-- Log drawer -->
   <div class="log-drawer glass-heavy" id="logDrawer">
     <div class="log-drawer-header" onclick="toggleLogDrawer()">
-      <span><span class="log-drawer-arrow">&#9654;</span>运行日志</span>
-      <button class="btn btn-secondary" style="height:24px;font-size:10px;padding:0 8px" onclick="event.stopPropagation(); clearLogs()">清空</button>
+      <span><span class="log-drawer-arrow">&#9654;</span>📜 运行日志</span>
+      <button class="btn btn-secondary" style="min-height:30px;font-size:12px;padding:0 10px" onclick="event.stopPropagation(); clearLogs()">清空</button>
     </div>
     <div class="log-area" id="logArea"></div>
   </div>
-
-</div><!-- end page -->
+</div>
 
 <script type="module" src="./tauri-bridge.js"></script>
 <script>
@@ -892,13 +1263,12 @@ const state = {
   activeTab: 'extract',
 };
 
-// ── Tab switching ──
 function switchTab(tabId) {
   state.activeTab = tabId;
-  document.querySelectorAll('.tab-btn').forEach(btn => {
+  document.querySelectorAll('.tab-btn').forEach((btn) => {
     btn.classList.toggle('active', btn.dataset.tab === tabId);
   });
-  document.querySelectorAll('.tab-pane').forEach(pane => {
+  document.querySelectorAll('.tab-pane').forEach((pane) => {
     pane.classList.remove('active');
   });
   const paneMap = { extract: 'tabExtract', preview: 'tabPreview', upload: 'tabUpload' };
@@ -911,22 +1281,21 @@ function toggleLogDrawer() {
   document.getElementById('logDrawer').classList.toggle('expanded');
 }
 
-// ── Tools ──
 function setToneClass(el, tone) {
-  el.classList.remove('neutral','success','warning','error');
+  el.classList.remove('neutral', 'success', 'warning', 'error');
   el.classList.add(tone || 'neutral');
-  // Update status icon text
   const icon = el.querySelector('.status-icon');
-  if (icon) {
-    if (tone === 'success') icon.textContent = '\u2713';
-    else if (tone === 'warning') icon.textContent = '!';
-    else if (tone === 'error') icon.textContent = '\u00d7';
-    else icon.textContent = '?';
-  }
+  if (!icon) return;
+  if (tone === 'success') icon.textContent = '🎉';
+  else if (tone === 'warning') icon.textContent = '⚠️';
+  else if (tone === 'error') icon.textContent = '💥';
+  else icon.textContent = '✨';
 }
+
 function formatSize(kb) {
-  return kb >= 1024 ? `${(kb/1024).toFixed(2)} MB` : `${(+kb).toFixed(1)} KB`;
+  return kb >= 1024 ? `${(kb / 1024).toFixed(2)} MB` : `${(+kb).toFixed(1)} KB`;
 }
+
 function buildPayload(method) {
   if (method === 'startExtract') {
     let selectedUser = {};
@@ -947,162 +1316,202 @@ function buildPayload(method) {
   }
   return null;
 }
+
+function addLog(message, level = 'info', timeText = null) {
+  const area = document.getElementById('logArea');
+  const line = document.createElement('div');
+  line.className = `log-line ${level}`;
+  line.innerHTML =
+    `<span class="log-time">[${timeText || new Date().toLocaleTimeString('zh-CN', { hour12: false })}]</span>` +
+    `<span class="log-message">${escapeHtml(message)}</span>`;
+  area.appendChild(line);
+  area.scrollTop = area.scrollHeight;
+  while (area.children.length > 500) area.removeChild(area.firstChild);
+}
+
 function callApi(method) {
   if (!state.apiReady || !state.api || typeof state.api[method] !== 'function') {
-    addLog('桌面桥接尚未准备好。', 'warn');
+    addLog('桌面桥接还没准备好，请稍等一下。', 'warn');
     return;
   }
   if (method === 'startUpload') switchTab('upload');
   if (method === 'loadEmojiFiles' || method === 'loadFromFolder') switchTab('preview');
   const payload = buildPayload(method);
-  if (payload) {
-    state.api[method](JSON.stringify(payload));
-  } else {
-    state.api[method]();
-  }
+  if (payload) state.api[method](JSON.stringify(payload));
+  else state.api[method]();
 }
+
 function handleUserChange() {
   if (!state.apiReady || !state.api) return;
   state.api.onUserChanged(document.getElementById('userSelect').value || '');
   updateButtons();
 }
+
 function setMode(mode) {
   state.mode = mode;
   document.getElementById('modeCardPersonal').classList.toggle('active', mode === 'personal');
   document.getElementById('modeCardEnterprise').classList.toggle('active', mode === 'enterprise');
   document.getElementById('packNameRow').classList.toggle('hidden', mode !== 'enterprise');
-  updateButtons();
   renderSelectionHint();
+  updateButtons();
 }
+
 function selectAllEmojis() {
-  state.selected = new Set(state.emojis.map(i => i.file));
+  state.selected = new Set(state.emojis.map((item) => item.file));
   renderEmojiGrid();
 }
+
 function clearEmojiSelection() {
   state.selected.clear();
   renderEmojiGrid();
 }
+
 function toggleEmoji(file) {
   state.selected.has(file) ? state.selected.delete(file) : state.selected.add(file);
   const card = document.querySelector(`.emoji-card[data-file="${CSS.escape(file)}"]`);
   if (card) card.classList.toggle('selected', state.selected.has(file));
   const sel = state.selected.size;
-  document.getElementById('emojiCount').textContent = `共 ${state.emojis.length} 个，已选 ${sel} 个。`;
-  renderSelectionHint(); updateButtons();
+  document.getElementById('emojiCount').textContent = `🎈 共 ${state.emojis.length} 个，已选 ${sel} 个。`;
+  renderSelectionHint();
+  updateButtons();
 }
-function clearLogs() { document.getElementById('logArea').innerHTML = ''; }
 
-// ── Status dot helpers ──
+function clearLogs() {
+  document.getElementById('logArea').innerHTML = '';
+}
+
 function setDot(id, tone) {
   const dot = document.getElementById(id);
   if (!dot) return;
-  dot.classList.remove('ok','warn','error');
+  dot.classList.remove('ok', 'warn', 'error');
   if (tone === 'success') dot.classList.add('ok');
   else if (tone === 'warning') dot.classList.add('warn');
   else if (tone === 'error') dot.classList.add('error');
 }
-function showBadge(id) {
-  document.getElementById(id)?.classList.add('visible');
+
+function showBadge(id, label = '新') {
+  const badge = document.getElementById(id);
+  if (!badge) return;
+  badge.textContent = label;
+  badge.classList.add('visible');
 }
 
-// ── Render ──
-function renderWechatStatus(p) {
+function renderWechatStatus(payload) {
   const card = document.getElementById('wechatStatusCard');
-  setToneClass(card, p.tone || 'neutral');
-  document.getElementById('wechatStatusTitle').textContent  = p.title  || '';
-  document.getElementById('wechatStatusDetail').textContent = p.detail || '';
-  setDot('dotWechat', p.tone);
+  setToneClass(card, payload.tone || 'neutral');
+  document.getElementById('wechatStatusTitle').textContent = payload.title || '';
+  document.getElementById('wechatStatusDetail').textContent = payload.detail || '';
+  setDot('dotWechat', payload.tone);
 }
-function renderUploadEnv(p) {
-  state.uploadEnv = p || state.uploadEnv;
+
+function renderUploadEnv(payload) {
+  state.uploadEnv = payload || state.uploadEnv;
   const card = document.getElementById('uploadEnvCard');
-  setToneClass(card, p.ok ? 'success' : 'warning');
-  document.getElementById('uploadEnvTitle').textContent  = p.message || '';
-  document.getElementById('uploadEnvDetail').textContent = p.detail  || '';
-  setDot('dotEnv', p.ok ? 'success' : 'warning');
+  const tone = payload.ok ? 'success' : (payload.message ? 'warning' : 'neutral');
+  setToneClass(card, tone);
+  document.getElementById('uploadEnvTitle').textContent = payload.message || '';
+  document.getElementById('uploadEnvDetail').textContent = payload.detail || '';
+  setDot('dotEnv', payload.ok ? 'success' : (payload.message ? 'warning' : ''));
   updateButtons();
 }
-function renderAuditSummary(p) {
-  // Audit results are shown via log events; update header dots only
-  setDot('dotWechat', p.tone);
-  setDot('dotEnv', p.tone === 'success' ? 'success' : p.tone);
+
+function renderAuditSummary(payload) {
+  setDot('dotWechat', payload.tone);
+  setDot('dotEnv', payload.tone === 'success' ? 'success' : payload.tone);
 }
+
 function renderUsers(users) {
   state.users = users || [];
-  const sel = document.getElementById('userSelect');
-  sel.innerHTML = '';
+  const select = document.getElementById('userSelect');
+  select.innerHTML = '';
   if (!state.users.length) {
-    sel.innerHTML = '<option value="">未检测到微信账号</option>';
-    updateButtons(); return;
+    select.innerHTML = '<option value="">尚未检测到微信账号</option>';
+    updateButtons();
+    return;
   }
-  state.users.forEach(u => {
+  state.users.forEach((user) => {
     const opt = document.createElement('option');
-    opt.value = JSON.stringify(u);
-    opt.textContent = u.running ? `${u.label} · 在线` : `${u.label} · 本地`;
-    sel.appendChild(opt);
+    opt.value = JSON.stringify(user);
+    opt.textContent = user.running ? `${user.label} · 在线` : `${user.label} · 本地目录`;
+    select.appendChild(opt);
   });
   updateButtons();
 }
+
 function renderEmojiGrid() {
-  const grid  = document.getElementById('emojiGrid');
+  const grid = document.getElementById('emojiGrid');
   const empty = document.getElementById('emojiEmpty');
   grid.innerHTML = '';
   if (!state.emojis.length) {
-    grid.classList.add('hidden'); empty.classList.remove('hidden');
-    document.getElementById('emojiCount').textContent = '共 0 个，已选 0 个。';
-    renderSelectionHint(); updateButtons(); return;
+    grid.classList.add('hidden');
+    empty.classList.remove('hidden');
+    document.getElementById('emojiCount').textContent = '🎈 共 0 个，已选 0 个。';
+    renderSelectionHint();
+    updateButtons();
+    return;
   }
-  empty.classList.add('hidden'); grid.classList.remove('hidden');
-  state.emojis.forEach(item => {
+  empty.classList.add('hidden');
+  grid.classList.remove('hidden');
+  state.emojis.forEach((item) => {
     const card = document.createElement('div');
     card.className = 'emoji-card' + (state.selected.has(item.file) ? ' selected' : '');
     card.dataset.file = item.file;
     card.onclick = () => toggleEmoji(item.file);
-    card.innerHTML = `
-      <div class="emoji-thumb"><img src="${escapeHtml(item.thumb)}" alt="${escapeHtml(item.name)}" loading="lazy"></div>
-      <div class="emoji-name" title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</div>
-      <div class="emoji-size">${formatSize(item.size_kb)}</div>`;
+    card.innerHTML =
+      `<div class="emoji-thumb"><img src="${escapeHtml(item.thumb)}" alt="${escapeHtml(item.name)}" loading="lazy"></div>` +
+      `<div class="emoji-name" title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</div>` +
+      `<div class="emoji-size">${formatSize(item.size_kb)}</div>`;
     grid.appendChild(card);
   });
   const sel = state.selected.size;
-  document.getElementById('emojiCount').textContent = `共 ${state.emojis.length} 个，已选 ${sel} 个。`;
-  renderSelectionHint(); updateButtons();
+  document.getElementById('emojiCount').textContent = `🎈 共 ${state.emojis.length} 个，已选 ${sel} 个。`;
+  renderSelectionHint();
+  updateButtons();
 }
+
 function renderSelectionHint() {
-  const sel  = state.selected.size;
+  const sel = state.selected.size;
   const hint = document.getElementById('selectionHint');
-  if (!state.emojis.length) { hint.textContent = '导出成功后会在这里显示表情预览。已有文件可点「从目录加载」。'; return; }
+  if (!state.emojis.length) {
+    hint.textContent = '🧺 导出完成后，这里会铺满你的表情贴纸；如果已经有图片，也可以直接从本地目录加载。';
+    return;
+  }
   if (state.mode === 'enterprise') {
     hint.textContent = sel < 6
-      ? `企业表情包模式至少需要 6 个，当前选中 ${sel} 个。`
-      : `企业模式将按 6-50 个一组上传，当前选中 ${sel} 个。`;
+      ? `🏢 企业表情包模式至少需要 6 个表情，当前选中 ${sel} 个。`
+      : `📦 企业模式会按 6 到 50 个一组打包上传，当前选中 ${sel} 个。`;
   } else {
-    hint.textContent = `个人表情模式将逐个上传，当前选中 ${sel} 个。`;
+    hint.textContent = `💬 个人表情模式会逐个上传，当前选中 ${sel} 个。`;
   }
 }
+
 function renderProgress(which, percent) {
   const safe = Math.max(0, Math.min(100, percent || 0));
-  document.getElementById(which === 'extract' ? 'progressExtractBar' : 'progressUploadBar').style.width = `${safe}%`;
-  document.getElementById(which === 'extract' ? 'progressExtractText' : 'progressUploadText').textContent = `${safe}%`;
+  const bar = document.getElementById(which === 'extract' ? 'progressExtractBar' : 'progressUploadBar');
+  const text = document.getElementById(which === 'extract' ? 'progressExtractText' : 'progressUploadText');
+  if (bar) bar.style.width = `${safe}%`;
+  if (text) text.textContent = `${safe}%`;
 }
+
 function renderPauseState(paused) {
   state.paused = paused;
-  const pauseBtn   = document.getElementById('btnPause');
+  const pauseBtn = document.getElementById('btnPause');
   const pauseBanner = document.getElementById('pauseBanner');
   if (paused) {
-    pauseBtn.textContent = '继续';
+    pauseBtn.textContent = '▶️ 继续';
     pauseBtn.className = 'btn btn-soft';
     pauseBanner.classList.add('visible');
   } else {
-    pauseBtn.textContent = '暂停';
+    pauseBtn.textContent = '⏸️ 暂停';
     pauseBtn.className = 'btn btn-warning';
     pauseBanner.classList.remove('visible');
   }
   updateButtons();
 }
-function renderBusy(p) {
-  state.busy       = !!p.busy;
-  state.busyAction = p.action || '';
+
+function renderBusy(payload) {
+  state.busy = !!payload.busy;
+  state.busyAction = payload.action || '';
   const pauseBtn = document.getElementById('btnPause');
   if (state.busy && state.busyAction === 'extract') {
     pauseBtn.classList.remove('hidden');
@@ -1111,25 +1520,21 @@ function renderBusy(p) {
     document.getElementById('pauseBanner').classList.remove('visible');
     state.paused = false;
   }
-  if (p.action === 'extract' && p.busy) {
-    setDot('dotExtract', '');
-    document.getElementById('labelExtract').textContent = '导出中…';
-  } else if (!p.busy) {
-    document.getElementById('labelExtract').textContent = '导出';
+  if (payload.action === 'extract' && payload.busy) {
+    setDot('dotExtract', 'warning');
+    document.getElementById('labelExtract').textContent = '📦 导出中';
+  } else if (!payload.busy) {
+    document.getElementById('labelExtract').textContent = '📦 导出';
   }
-  // Upload phase switching
-  if (p.action === 'upload' && p.busy) {
+  if (payload.action === 'upload' && payload.busy) {
     showUploadPhase('progress');
     setUploadStep(2);
   }
-  if (!p.busy && state.busyAction === '') {
-    // stay in current phase (done handled elsewhere)
-  }
   updateButtons();
 }
-// ── Upload phase management ──
+
 function setUploadStep(stepNum) {
-  for (let i = 1; i <= 4; i++) {
+  for (let i = 1; i <= 4; i += 1) {
     const el = document.getElementById('uploadStep' + i);
     if (!el) continue;
     el.classList.remove('active', 'done');
@@ -1137,11 +1542,13 @@ function setUploadStep(stepNum) {
     else if (i === stepNum) el.classList.add('active');
   }
 }
+
 function showUploadPhase(phase) {
   document.getElementById('uploadPhase1').classList.toggle('hidden', phase !== 'prep');
   document.getElementById('uploadPhaseProgress').classList.toggle('hidden', phase !== 'progress');
   document.getElementById('uploadPhaseDone').classList.toggle('hidden', phase !== 'done');
 }
+
 function resetUploadPhase() {
   showUploadPhase('prep');
   setUploadStep(1);
@@ -1149,18 +1556,19 @@ function resetUploadPhase() {
   document.getElementById('progressUploadText').textContent = '0%';
   document.getElementById('uploadProgressLabel').textContent = '等待开始';
   state.uploadStatusTone = 'neutral';
-  const ls = document.getElementById('liveStatus');
-  ls.classList.add('idle');
+  const liveStatus = document.getElementById('liveStatus');
+  liveStatus.classList.add('idle');
   document.getElementById('liveStatusText').textContent = '准备中…';
   updateButtons();
 }
+
 function finishUploadPhase(success, detail) {
   showUploadPhase('done');
   setUploadStep(4);
   const card = document.getElementById('uploadResultCard');
   const tone = success ? 'success' : 'warning';
   setToneClass(card, tone);
-  document.getElementById('uploadResultTitle').textContent = success ? '上传完成' : '上传结束';
+  document.getElementById('uploadResultTitle').textContent = success ? '导入完成' : '导入结束';
   document.getElementById('uploadResultDetail').textContent = detail || '';
 }
 
@@ -1171,16 +1579,16 @@ function updateButtons() {
   const extracting = state.busy && state.busyAction === 'extract';
   const uploading = state.busy && state.busyAction === 'upload';
 
-  document.getElementById('btnRunAudit').disabled     = state.busy;
+  document.getElementById('btnRunAudit').disabled = state.busy;
   document.getElementById('btnOpenOutputDir').disabled = state.busy;
   document.getElementById('btnRefreshWechat').disabled = state.busy;
-  document.getElementById('btnBrowseWechat').disabled  = state.busy;
-  document.getElementById('btnPickFiles').disabled     = state.busy;
-  document.getElementById('btnLoadFolder').disabled    = state.busy;
-  document.getElementById('btnCheckUploadEnv').disabled= state.busy;
-  document.getElementById('btnSelectAll').disabled     = state.busy || !hasEmojis;
-  document.getElementById('btnClearSelection').disabled= state.busy || !hasEmojis;
-  document.getElementById('btnExtract').disabled       = state.busy || !userSelected;
+  document.getElementById('btnBrowseWechat').disabled = state.busy;
+  document.getElementById('btnPickFiles').disabled = state.busy;
+  document.getElementById('btnLoadFolder').disabled = state.busy;
+  document.getElementById('btnCheckUploadEnv').disabled = state.busy;
+  document.getElementById('btnSelectAll').disabled = state.busy || !hasEmojis;
+  document.getElementById('btnClearSelection').disabled = state.busy || !hasEmojis;
+  document.getElementById('btnExtract').disabled = state.busy || !userSelected;
   document.getElementById('btnPause').disabled = !extracting;
 
   const btnStopUpload = document.getElementById('btnStopUpload');
@@ -1191,20 +1599,20 @@ function updateButtons() {
   if (state.mode === 'enterprise' && selCount < 6) canUpload = false;
   document.getElementById('btnUpload').disabled = !canUpload;
 
-  document.getElementById('btnExtract').textContent  = extracting ? '导出中...' : '开始导出';
-  document.getElementById('btnUpload').textContent   = uploading ? '导入中...' : '开始导入飞书';
-  document.getElementById('btnRunAudit').textContent = (state.busy && state.busyAction === 'audit')  ? '诊断中...' : '运行诊断';
+  document.getElementById('btnExtract').textContent = extracting ? '🪄 导出中…' : '🪄 开始导出';
+  document.getElementById('btnUpload').textContent = uploading ? '🚀 导入中…' : '🚀 开始导入飞书';
+  document.getElementById('btnRunAudit').textContent = (state.busy && state.busyAction === 'audit') ? '🩺 诊断中…' : '🩺 运行诊断';
 }
 
 function _appendEmojiCards(items) {
-  const grid  = document.getElementById('emojiGrid');
+  const grid = document.getElementById('emojiGrid');
   const empty = document.getElementById('emojiEmpty');
   if (state.emojis.length > 0) {
     empty.classList.add('hidden');
     grid.classList.remove('hidden');
   }
   const frag = document.createDocumentFragment();
-  items.forEach(item => {
+  items.forEach((item) => {
     const card = document.createElement('div');
     card.className = 'emoji-card selected';
     card.dataset.file = item.file;
@@ -1217,29 +1625,22 @@ function _appendEmojiCards(items) {
   });
   grid.appendChild(frag);
 }
-function _updateEmojiCounts(detail) {
+
+function _updateEmojiCounts() {
   const sel = state.selected.size;
-  document.getElementById('emojiCount').textContent = `共 ${state.emojis.length} 个，已选 ${sel} 个。`;
+  document.getElementById('emojiCount').textContent = `🎈 共 ${state.emojis.length} 个，已选 ${sel} 个。`;
   renderSelectionHint();
   updateButtons();
 }
 
-function addLog(message, level='info', timeText=null) {
-  const area = document.getElementById('logArea');
-  const line = document.createElement('div');
-  line.className = `log-line ${level}`;
-  line.innerHTML = `<span class="log-time">[${timeText || new Date().toLocaleTimeString('zh-CN',{hour12:false})}]</span>`
-                 + `<span class="log-message">${escapeHtml(message)}</span>`;
-  area.appendChild(line);
-  area.scrollTop = area.scrollHeight;
-  while (area.children.length > 500) area.removeChild(area.firstChild);
-}
-
-// ── Python → JS events ──
 window.onPythonEvent = function(event, payload) {
   switch (event) {
-    case 'wechatStatus': renderWechatStatus(payload); break;
-    case 'userList':     renderUsers(payload); break;
+    case 'wechatStatus':
+      renderWechatStatus(payload);
+      break;
+    case 'userList':
+      renderUsers(payload);
+      break;
     case 'dbPath':
       document.getElementById('dbPath').value = payload.text || '';
       document.getElementById('dbPath').style.color = payload.ok ? 'var(--success)' : 'var(--text-muted)';
@@ -1249,17 +1650,17 @@ window.onPythonEvent = function(event, payload) {
       break;
     case 'emojiList':
       state.emojis = payload || [];
-      state.selected = new Set(state.emojis.map(i => i.file));
+      state.selected = new Set(state.emojis.map((item) => item.file));
       renderEmojiGrid();
       if (state.emojis.length > 0 && state.activeTab === 'extract') {
         switchTab('preview');
         setDot('dotExtract', 'success');
-        document.getElementById('labelExtract').textContent = `已导出 ${state.emojis.length}`;
+        document.getElementById('labelExtract').textContent = `📦 已导出 ${state.emojis.length}`;
       }
       break;
     case 'emojiListAppend': {
       const newItems = payload || [];
-      newItems.forEach(item => {
+      newItems.forEach((item) => {
         state.emojis.push(item);
         state.selected.add(item.file);
       });
@@ -1269,7 +1670,7 @@ window.onPythonEvent = function(event, payload) {
       break;
     }
     case 'emojiListReady':
-      _updateEmojiCounts('预览已加载。');
+      _updateEmojiCounts();
       if (state.activeTab !== 'preview') showBadge('badgePreview');
       break;
     case 'progress':
@@ -1284,86 +1685,81 @@ window.onPythonEvent = function(event, payload) {
       if (!payload.busy && previousBusyAction === 'extract' && state.emojis.length > 0 && state.activeTab === 'extract') {
         switchTab('preview');
         setDot('dotExtract', 'success');
-        document.getElementById('labelExtract').textContent = `已导出 ${state.emojis.length}`;
+        document.getElementById('labelExtract').textContent = `📦 已导出 ${state.emojis.length}`;
       }
       if (!payload.busy && previousBusyAction === 'upload') {
-        const ls = document.getElementById('liveStatus');
-        const lastStatus = ls ? document.getElementById('liveStatusText').textContent : '';
+        const lastStatus = document.getElementById('liveStatusText').textContent || '';
         finishUploadPhase(state.uploadStatusTone === 'success', lastStatus);
       }
       break;
     }
-    case 'pauseState':  renderPauseState(!!payload.paused); break;
-    case 'uploadEnv':   renderUploadEnv(payload); break;
+    case 'pauseState':
+      renderPauseState(!!payload.paused);
+      break;
+    case 'uploadEnv':
+      renderUploadEnv(payload);
+      break;
     case 'uploadStatus': {
       const text = payload.text || '';
       const tone = payload.tone || 'neutral';
       state.uploadStatusTone = tone;
-      // Update live status indicator
-      const ls = document.getElementById('liveStatus');
-      if (ls && !ls.classList.contains('hidden')) {
-        ls.classList.toggle('idle', tone === 'neutral' && !state.busy);
+      const liveStatus = document.getElementById('liveStatus');
+      if (liveStatus && !liveStatus.classList.contains('hidden')) {
+        liveStatus.classList.toggle('idle', tone === 'neutral' && !state.busy);
         document.getElementById('liveStatusText').textContent = text;
       }
-      // Phase transitions based on status text
       if (/launching|启动|浏览器/.test(text)) {
         setUploadStep(2);
-        const bw = document.getElementById('browserWarning');
-        if (bw) bw.classList.remove('hidden');
+        document.getElementById('browserWarning')?.classList.remove('hidden');
       }
-      if (/login|登录|扫码/.i.test(text) && !/成功|success/.test(text)) {
+      if (/login|登录|扫码/i.test(text) && !/成功|success/.test(text)) {
         setUploadStep(2);
       }
       if (/登录成功|logged.?in|ready/i.test(text)) {
-        setUploadStep(2); // step 2 done, moving to 3
+        setUploadStep(2);
       }
       if (/upload|上传|import|导入/.test(text) && !/准备|ready|env/.test(text)) {
         setUploadStep(3);
-        const bw = document.getElementById('browserWarning');
-        if (bw) bw.classList.add('hidden');
+        document.getElementById('browserWarning')?.classList.add('hidden');
       }
-      if (/done|完成|成功.*fail|中止|stopped/.test(text)) {
-        // Final state handled by busyState(false)
-      }
-      // Update upload progress label
-      const upl = document.getElementById('uploadProgressLabel');
-      if (upl) upl.textContent = text;
+      const label = document.getElementById('uploadProgressLabel');
+      if (label) label.textContent = text;
+      if (state.activeTab !== 'upload') showBadge('badgeUpload');
       break;
     }
-    case 'auditSummary': renderAuditSummary(payload); break;
-    case 'log': addLog(payload.message || '', payload.level || 'info', payload.time || null); break;
+    case 'auditSummary':
+      renderAuditSummary(payload);
+      break;
+    case 'log':
+      addLog(payload.message || '', payload.level || 'info', payload.time || null);
+      break;
   }
 };
 
 document.addEventListener('DOMContentLoaded', () => {
   setMode('personal');
   updateButtons();
-  addLog('页面已加载，正在连接桌面桥接…');
+  addLog('页面已经就位，正在连接桌面桥接…');
 });
 
 window.addEventListener('pywebviewready', () => {
   state.api = window.pywebview.api;
   state.apiReady = true;
-  addLog('桌面桥接已连接，正在初始化…', 'success');
+  addLog('桌面桥接连接成功，正在初始化面板…', 'success');
   state.api.init().then((payload) => {
     if (!payload) return;
     if (payload.outputDir) {
       document.getElementById('outputDir').value = payload.outputDir;
     }
     if (payload.uploadStatus) {
-      const el = document.getElementById('uploadProgressLabel');
-      if (el) el.textContent = payload.uploadStatus.text || '';
+      const label = document.getElementById('uploadProgressLabel');
+      if (label) label.textContent = payload.uploadStatus.text || '';
     }
-    if (payload.auditSummary) {
-      renderAuditSummary(payload.auditSummary);
-    }
-    if (payload.busyState) {
-      renderBusy(payload.busyState);
-    } else {
-      updateButtons();
-    }
+    if (payload.auditSummary) renderAuditSummary(payload.auditSummary);
+    if (payload.busyState) renderBusy(payload.busyState);
+    else updateButtons();
   }).catch((err) => {
-    addLog(`初始化失败: ${err}`, 'error');
+    addLog(`初始化失败：${err}`, 'error');
   });
   callApi('detectWechat');
 });
