@@ -927,6 +927,26 @@ function setToneClass(el, tone) {
 function formatSize(kb) {
   return kb >= 1024 ? `${(kb/1024).toFixed(2)} MB` : `${(+kb).toFixed(1)} KB`;
 }
+function buildPayload(method) {
+  if (method === 'startExtract') {
+    let selectedUser = {};
+    try {
+      selectedUser = JSON.parse(document.getElementById('userSelect').value || '{}');
+    } catch {}
+    return {
+      selectedUser,
+      outputDir: document.getElementById('outputDir').value || '',
+    };
+  }
+  if (method === 'startUpload') {
+    return {
+      selectedFiles: Array.from(state.selected),
+      mode: state.mode,
+      packName: document.getElementById('packName').value || '',
+    };
+  }
+  return null;
+}
 function callApi(method) {
   if (!state.apiReady || !state.api || typeof state.api[method] !== 'function') {
     addLog('桌面桥接尚未准备好。', 'warn');
@@ -934,7 +954,12 @@ function callApi(method) {
   }
   if (method === 'startUpload') switchTab('upload');
   if (method === 'loadEmojiFiles' || method === 'loadFromFolder') switchTab('preview');
-  state.api[method]();
+  const payload = buildPayload(method);
+  if (payload) {
+    state.api[method](JSON.stringify(payload));
+  } else {
+    state.api[method]();
+  }
 }
 function handleUserChange() {
   if (!state.apiReady || !state.api) return;
@@ -1211,15 +1236,6 @@ function addLog(message, level='info', timeText=null) {
 }
 
 // ── Python → JS events ──
-window.appApi = {
-  getSelectedUser()  { return document.getElementById('userSelect').value || ''; },
-  getSelectedFiles() { return JSON.stringify(Array.from(state.selected)); },
-  getSelectedMode()  { return state.mode; },
-  getPackName()      { return document.getElementById('packName').value || ''; },
-  getOutputDir()     { return document.getElementById('outputDir').value || ''; },
-  getBusyAction()    { return state.busyAction; },
-};
-
 window.onPythonEvent = function(event, payload) {
   switch (event) {
     case 'wechatStatus': renderWechatStatus(payload); break;
@@ -1349,7 +1365,6 @@ window.addEventListener('pywebviewready', () => {
   }).catch((err) => {
     addLog(`初始化失败: ${err}`, 'error');
   });
-  // Auto-detect WeChat after bridge connects
   callApi('detectWechat');
 });
 </script>

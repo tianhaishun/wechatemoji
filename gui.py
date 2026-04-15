@@ -29,9 +29,11 @@ class Api:
             "browser_runtime": False,
         }
         self._busy = False
+        self._busy_action = ""
         self._pause_event = threading.Event()
         self._pause_event.set()   # 初始未暂停（set = 可运行）
         self._paused = False
+        self._current_output_dir = config.EMOJI_OUTPUT_DIR
         # ── 性能优化：单线程 emit 队列 + 节流计时 ──
         self._emit_queue: queue.Queue = queue.Queue()
         self._last_progress_time = 0.0
@@ -52,7 +54,7 @@ class Api:
                 pass
 
     def init(self):
-        payload = {
+        return {
             "outputDir": config.EMOJI_OUTPUT_DIR,
             "uploadStatus": {
                 "text": "ready. upload env check is now on-demand to keep startup responsive.",
@@ -66,20 +68,6 @@ class Api:
             "busyState": {"busy": False, "action": ""},
         }
 
-        # Do not emit JS events while the JS->Python init bridge call is still
-        # active. That re-entrancy is the biggest source of startup hangs.
-        def _bg():
-            time.sleep(0.35)
-            self._emit("outputDir", payload["outputDir"])
-            self._emit("uploadStatus", payload["uploadStatus"])
-            self._emit("auditSummary", payload["auditSummary"])
-            self._emit("busyState", payload["busyState"])
-            time.sleep(0.8)
-            self.detectWechat()
-
-        threading.Thread(target=_bg, daemon=True).start()
-        return payload
-
     # ---- WeChat detection ----
 
     def detectWechat(self):
@@ -87,8 +75,53 @@ class Api:
             "wechatStatus",
             {"tone": "neutral", "title": "detecting wechat", "detail": "reading wechat accounts and dirs..."},
         )
+        threading.Thread(target=self._detect_wechat_worker, daemon=True).start()
+
+    def onUserChanged(self, value):
         try:
-            from wechat_extractor import find_emoticon_db, get_wechat_info
+            data = json.loads(value)
+        except Exception:
+            data = {}
+        self._emit_db_path_for_user(data)
+
+    def browseWechatDir(self):
+        result = self.window.create_file_dialog(
+            webview.FOLDER_DIALOG, directory=config.WECHAT_FILES_ROOT
+        )
+        if not result:
+            return
+        config.WECHAT_FILES_ROOT = result[0]
+        self._log(f"wechat data root set to: {result[0]}")
+        self.detectWechat()
+
+    def browseOutputDir(self):
+        result = self.window.create_file_dialog(
+            webview.FOLDER_DIALOG, directory=config.EMOJI_OUTPUT_DIR
+        )
+        if not result:
+            return
+        config.EMOJI_OUTPUT_DIR = result[0]
+        self._current_output_dir = result[0]
+        self._emit("outputDir", result[0])
+        self._log(f"output dir updated to: {result[0]}")
+
+    def openOutputDir(self):
+        folder = config.EMOJI_OUTPUT_DIR
+        os.makedirs(folder, exist_ok=True)
+        try:
+            os.startfile(folder)
+            self._log(f"opened output dir: {folder}")
+        except Exception as exc:
+            self._log(f"failed to open output dir: {exc}", "error")
+
+    # ---- Upload env check ----
+
+    def checkUploadEnv(self):
+        threading.Thread(target=self._check_upload_env_worker, daemon=True).start()
+
+    def _detect_wechat_worker(self):
+        try:
+            from wechat_extractor import get_wechat_info
 
             wx_infos = get_wechat_info()
             if wx_infos:
@@ -125,57 +158,8 @@ class Api:
             )
             self._log(f"wechat detection failed: {exc}", "error")
 
-    def onUserChanged(self, value):
-        try:
-            data = json.loads(value)
-        except Exception:
-            data = {}
-        self._emit_db_path_for_user(data)
-
-    def browseWechatDir(self):
-        result = self.window.create_file_dialog(
-            webview.FOLDER_DIALOG, directory=config.WECHAT_FILES_ROOT
-        )
-        if not result:
-            return
-        config.WECHAT_FILES_ROOT = result[0]
-        self._log(f"wechat data root set to: {result[0]}")
-        self.detectWechat()
-
-    def browseOutputDir(self):
-        result = self.window.create_file_dialog(
-            webview.FOLDER_DIALOG, directory=config.EMOJI_OUTPUT_DIR
-        )
-        if not result:
-            return
-        config.EMOJI_OUTPUT_DIR = result[0]
-        self._emit("outputDir", result[0])
-        self._log(f"output dir updated to: {result[0]}")
-
-    def openOutputDir(self):
-        folder = config.EMOJI_OUTPUT_DIR
-        os.makedirs(folder, exist_ok=True)
-        try:
-            os.startfile(folder)
-            self._log(f"opened output dir: {folder}")
-        except Exception as exc:
-            self._log(f"failed to open output dir: {exc}", "error")
-
-    # ---- Upload env check ----
-
-    def checkUploadEnv(self):
-        try:
-            from feishu_uploader import check_upload_environment
-
-            self.upload_env = check_upload_environment()
-        except Exception as exc:
-            self.upload_env = {
-                "ok": False,
-                "python_package": False,
-                "browser_runtime": False,
-                "message": f"upload env check failed: {exc}",
-            }
-
+    def _check_upload_env_worker(self):
+        self.upload_env = self._resolve_upload_env()
         payload = {
             "ok": bool(self.upload_env.get("ok")),
             "message": self.upload_env.get("message", ""),
@@ -183,6 +167,19 @@ class Api:
         }
         self._emit("uploadEnv", payload)
         self._log(payload["message"], "success" if payload["ok"] else "warn")
+
+    def _resolve_upload_env(self) -> dict:
+        try:
+            from feishu_uploader import check_upload_environment
+
+            return check_upload_environment()
+        except Exception as exc:
+            return {
+                "ok": False,
+                "python_package": False,
+                "browser_runtime": False,
+                "message": f"upload env check failed: {exc}",
+            }
 
     def runAudit(self):
         if self._busy:
@@ -240,20 +237,28 @@ class Api:
 
     # ---- Extract ----
 
-    def startExtract(self):
+    def startExtract(self, raw_payload: str | None = None):
         if self._busy:
             return
 
-        user_data = self._selected_user_data()
+        payload = self._parse_payload(raw_payload)
+        user_data = payload.get("selectedUser") or {}
+        if isinstance(user_data, str):
+            try:
+                user_data = json.loads(user_data)
+            except Exception:
+                user_data = {}
         wxid = user_data.get("wxid", "")
         if not wxid:
             self._log("请先选择一个微信账号", "error")
             return
 
-        output_dir = self._selected_output_dir()
+        output_dir = (payload.get("outputDir") or config.EMOJI_OUTPUT_DIR or "").strip()
         if not output_dir:
             self._log("输出目录不能为空", "error")
             return
+        config.EMOJI_OUTPUT_DIR = output_dir
+        self._current_output_dir = output_dir
 
         # 重置暂停状态，确保以未暂停状态开始
         self._pause_event.set()
@@ -282,9 +287,9 @@ class Api:
 
         threading.Thread(target=worker, daemon=True).start()
 
-    def pauseExtract(self):
+    def pauseExtract(self, _raw_payload: str | None = None):
         """切换暂停/继续状态。"""
-        if not self._busy or (self._js_eval("window.appApi.getBusyAction()") or "").strip() not in ("extract", ""):
+        if not self._busy or self._busy_action != "extract":
             return
         if self._paused:
             self._pause_event.set()
@@ -294,7 +299,7 @@ class Api:
         else:
             self._pause_event.clear()
             self._paused = True
-            files = self._collect_emoji_files(self._selected_output_dir())
+            files = self._collect_emoji_files(self._current_output_dir)
             if files:
                 self.emoji_files = files
                 self._load_emoji_thumbs(files)
@@ -315,6 +320,7 @@ class Api:
             return
 
         config.EMOJI_OUTPUT_DIR = folder
+        self._current_output_dir = folder
         self.emoji_files = files
         self._emit("outputDir", folder)
         self._load_emoji_thumbs(files)
@@ -346,6 +352,7 @@ class Api:
             config.EMOJI_OUTPUT_DIR = os.path.commonpath(files)
         except ValueError:
             config.EMOJI_OUTPUT_DIR = str(Path(files[0]).parent)
+        self._current_output_dir = config.EMOJI_OUTPUT_DIR
         self.emoji_files = files
         self._emit("outputDir", config.EMOJI_OUTPUT_DIR)
         self._load_emoji_thumbs(files)
@@ -353,17 +360,18 @@ class Api:
 
     # ---- Upload ----
 
-    def startUpload(self):
+    def startUpload(self, raw_payload: str | None = None):
         if self._busy:
             return
 
-        files = self._selected_files() or self.emoji_files
+        payload = self._parse_payload(raw_payload)
+        files = payload.get("selectedFiles") or self.emoji_files
         if not files:
             self._log("no emoji files to upload", "error")
             return
 
-        mode = self._selected_mode()
-        pack_name = self._selected_pack_name() or "wechat_emoji_pack"
+        mode = (payload.get("mode") or "personal").strip()
+        pack_name = (payload.get("packName") or "wechat_emoji_pack").strip()
         self._clear_stop_upload_signal()
 
         if mode == "enterprise" and len(files) < config.FEISHU_EMOJI_PACK_MIN:
@@ -386,7 +394,15 @@ class Api:
             uploader = None
             try:
                 # 环境检查放在 worker 线程内，避免阻塞 UI 线程（Chromium 启动约需 1-2 秒）
-                self.checkUploadEnv()
+                self.upload_env = self._resolve_upload_env()
+                self._emit(
+                    "uploadEnv",
+                    {
+                        "ok": bool(self.upload_env.get("ok")),
+                        "message": self.upload_env.get("message", ""),
+                        "detail": self._build_upload_env_detail(self.upload_env),
+                    },
+                )
                 if not self.upload_env.get("ok"):
                     self._emit(
                         "uploadStatus",
@@ -432,8 +448,8 @@ class Api:
 
         threading.Thread(target=worker, daemon=True).start()
 
-    def stopUpload(self):
-        if not self._busy or (self._js_eval("window.appApi.getBusyAction()") or "").strip() != "upload":
+    def stopUpload(self, _raw_payload: str | None = None):
+        if not self._busy or self._busy_action != "upload":
             return
         os.makedirs(os.path.dirname(self._stop_upload_signal_path()), exist_ok=True)
         Path(self._stop_upload_signal_path()).touch()
@@ -467,7 +483,7 @@ class Api:
 
         # 即使 files 为空，也尝试从输出目录加载已有文件（支持暂停后直接导入）
         if not files:
-            output_dir = self._selected_output_dir()
+            output_dir = self._current_output_dir
             files = self._collect_emoji_files(output_dir)
 
         if files:
@@ -479,7 +495,7 @@ class Api:
                 {
                     "tone": "success",
                     "title": f"已导出 {len(files)} 个表情",
-                    "detail": f"输出目录: {self._selected_output_dir()}",
+                    "detail": f"输出目录: {self._current_output_dir}",
                 },
             )
             self._log(f"导出完成，共 {len(files)} 个表情", "success")
@@ -567,28 +583,14 @@ class Api:
         except Exception as exc:
             self._emit("dbPath", {"text": f"db detection failed: {exc}", "ok": False})
 
-    def _selected_user_data(self) -> dict:
-        raw = self._js_eval("window.appApi.getSelectedUser()") or ""
+    def _parse_payload(self, raw_payload: str | None) -> dict:
+        if not raw_payload:
+            return {}
         try:
-            return json.loads(raw) if raw else {}
+            payload = json.loads(raw_payload)
+            return payload if isinstance(payload, dict) else {}
         except Exception:
             return {}
-
-    def _selected_output_dir(self) -> str:
-        return self._js_eval("window.appApi.getOutputDir()") or config.EMOJI_OUTPUT_DIR
-
-    def _selected_files(self) -> list[str]:
-        raw = self._js_eval("window.appApi.getSelectedFiles()") or "[]"
-        try:
-            return json.loads(raw)
-        except Exception:
-            return []
-
-    def _selected_mode(self) -> str:
-        return (self._js_eval("window.appApi.getSelectedMode()") or "personal").strip()
-
-    def _selected_pack_name(self) -> str:
-        return (self._js_eval("window.appApi.getPackName()") or "").strip()
 
     def _stop_upload_signal_path(self) -> str:
         return bridge_common.stop_upload_signal_path()
@@ -612,6 +614,7 @@ class Api:
 
     def _set_busy(self, busy: bool, action: str):
         self._busy = busy
+        self._busy_action = action if busy else ""
         self._emit("busyState", {"busy": busy, "action": action})
 
     def _build_upload_env_detail(self, env: dict) -> str:
@@ -637,16 +640,6 @@ class Api:
         if not self.window:
             return
         self._emit_queue.put(js_code)  # 不直接调用，入队后由 drainer 串行处理
-
-    def _js_eval(self, js_expr: str):
-        if not self.window:
-            return ""
-        try:
-            result = self.window.evaluate_js(js_expr)
-            return result if result is not None else ""
-        except Exception:
-            return ""
-
 
 def run_gui():
     api = Api()

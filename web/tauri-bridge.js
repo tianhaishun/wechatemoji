@@ -97,6 +97,18 @@
     }
   }
 
+  function parsePayload(rawPayload) {
+    if (!rawPayload || typeof rawPayload !== "string") {
+      return {};
+    }
+    try {
+      const payload = JSON.parse(rawPayload);
+      return payload && typeof payload === "object" ? payload : {};
+    } catch {
+      return {};
+    }
+  }
+
   // ── Build the pywebview-compatible API surface ──
   window.pywebview = {
     api: {
@@ -126,12 +138,10 @@
       ),
 
       // ── Long-running operations (streaming events) ──
-      startExtract: () => {
-        let wxid = "";
-        try {
-          const userData = JSON.parse(document.getElementById("userSelect")?.value || "{}");
-          wxid = userData.wxid || "";
-        } catch {}
+      startExtract: (rawPayload) => {
+        const payload = parsePayload(rawPayload);
+        const userData = payload.selectedUser || {};
+        const wxid = userData.wxid || "";
         if (!wxid) {
           window.onPythonEvent("log", {
             time: new Date().toLocaleTimeString("zh-CN", { hour12: false }),
@@ -140,22 +150,20 @@
           });
           return;
         }
-        const outputDir = document.getElementById("outputDir")?.value || "";
-        return call("startExtract", { wxid, output_dir: outputDir });
+        return call("startExtract", {
+          wxid,
+          output_dir: payload.outputDir || document.getElementById("outputDir")?.value || "",
+        });
       },
       pauseExtract: () => call("pauseExtract"),
       runAudit: () => call("runAudit"),
-      startUpload: () => {
-        const mode = (document.querySelector('input[name="mode"]:checked') || {}).value || "personal";
-        const packName = (document.getElementById("packName") || {}).value || "wechat_emoji_pack";
-        let selectedFiles = [];
-        try {
-          selectedFiles = JSON.parse(window.appApi?.getSelectedFiles() || "[]");
-        } catch {}
+      startUpload: (rawPayload) => {
+        const payload = parsePayload(rawPayload);
+        const selectedFiles = Array.isArray(payload.selectedFiles) ? payload.selectedFiles : [];
         return call("startUpload", {
           files: selectedFiles.length > 0 ? selectedFiles : undefined,
-          mode,
-          pack_name: packName,
+          mode: payload.mode || "personal",
+          pack_name: payload.packName || "wechat_emoji_pack",
         });
       },
       stopUpload: () => call("stopUpload"),
