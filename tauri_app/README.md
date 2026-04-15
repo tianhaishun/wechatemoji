@@ -20,4 +20,5 @@ Prerequisites before `npm run tauri dev` will work on Windows:
 Recommended next steps:
 1. Install Rust + MSVC prerequisites.
 2. Run `npm install` inside `tauri_app`.
-3. Start replacing the remaining legacy PyWebView actions with Tauri-native commands and events.
+3. Run `npm run tauri:check` to validate the Rust shell quickly.
+4. Start replacing the remaining legacy PyWebView actions with Tauri-native commands and events.

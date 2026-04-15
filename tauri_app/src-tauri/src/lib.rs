@@ -1,8 +1,8 @@
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
+use std::io::BufRead;
 use std::path::PathBuf;
 use std::process::{Command, Stdio};
-use std::io::BufRead;
 use std::sync::mpsc;
 use std::thread;
 use tauri::Emitter;
@@ -24,7 +24,11 @@ fn workspace_root() -> PathBuf {
         .join("..")
         .join("..")
         .canonicalize()
-        .unwrap_or_else(|_| PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("..").join(".."))
+        .unwrap_or_else(|_| {
+            PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+                .join("..")
+                .join("..")
+        })
 }
 
 fn python_candidates() -> Vec<(String, Vec<String>)> {
@@ -117,10 +121,7 @@ fn run_python_bridge(
                     // It's the final result line
                     final_result = Some(BridgeEnvelope {
                         payload: val.get("payload").cloned(),
-                        error: val
-                            .get("error")
-                            .and_then(|e| e.as_str())
-                            .map(String::from),
+                        error: val.get("error").and_then(|e| e.as_str()).map(String::from),
                     });
                 }
             }
@@ -155,7 +156,10 @@ fn run_python_bridge(
             // Process exited with error but no structured result — surface exit code
             return Ok(final_result.unwrap_or(BridgeEnvelope {
                 payload: None,
-                error: Some(format!("python exited with code {}", status.code().unwrap_or(-1))),
+                error: Some(format!(
+                    "python exited with code {}",
+                    status.code().unwrap_or(-1)
+                )),
             }));
         }
 
@@ -169,11 +173,15 @@ fn run_python_bridge(
 }
 
 #[tauri::command]
-async fn bridge_call(app: tauri::AppHandle, method: String, payload: Option<Value>) -> Result<BridgeEnvelope, String> {
+async fn bridge_call(
+    app: tauri::AppHandle,
+    method: String,
+    payload: Option<Value>,
+) -> Result<BridgeEnvelope, String> {
     // MUST run on a blocking thread — child.wait() would freeze the WebView2 UI thread
-    tokio::task::spawn_blocking(move || {
-        run_python_bridge(Some(app), &method, payload)
-    }).await.map_err(|e| format!("blocking task failed: {e}"))?
+    tokio::task::spawn_blocking(move || run_python_bridge(Some(app), &method, payload))
+        .await
+        .map_err(|e| format!("blocking task failed: {e}"))?
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]

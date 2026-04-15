@@ -4,7 +4,7 @@
 - 优先全自动：通过 Playwright 模拟点击表情面板，自动注入文件
 - 自动失败时退回半自动：浏览器打开飞书后引导用户手动点到上传对话框，
   工具监控到 file-input 出现后自动注入文件，不需要用户选文件
-- 截图调试：每次操作失败都保存截图到 output/debug/ 便于排查
+- 截图调试：每次操作失败都保存截图到 config.DEBUG_DIR 便于排查
 """
 
 from __future__ import annotations
@@ -301,7 +301,7 @@ class FeishuUploader:
             self.progress_callback(current, total, message)
 
     def _screenshot(self, name: str) -> None:
-        """保存调试截图到 output/debug/。"""
+        """保存调试截图到 config.DEBUG_DIR。"""
         if not self._page:
             return
         try:

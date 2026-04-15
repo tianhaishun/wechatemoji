@@ -46,6 +46,12 @@ python main.py
 python -m py_compile main.py config.py gui.py key_extractor.py wechat_extractor.py bridge_common.py feishu_uploader.py tauri_bridge.py stage_playwright_runtime.py sniff_feishu.py
 ```
 
+如果你修改了 Tauri 侧桥接，也建议补做一次：
+
+```bash
+cargo check --manifest-path tauri_app/src-tauri/Cargo.toml
+```
+
 如果你改了打包逻辑，也欢迎补充验证：
 
 ```bash
@@ -66,6 +72,9 @@ build.bat
 - 不为了“炫技巧”牺牲稳定性和可读性
 - 新增行为变化时，请同步更新 README 或相关文档
 - 与安全、隐私、上传流程相关的修改，请尽量写清风险和边界
+- Python 模块文件名保持 `snake_case`
+- 文本文件默认使用 UTF-8 编码，遵循仓库中的 `.editorconfig` 与 `.gitattributes`
+- 可以使用仓库中的 `pyproject.toml` 作为静态检查与格式化约定基础
 
 ## 沟通方式
 

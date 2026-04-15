@@ -2,11 +2,19 @@
   "name": "wechatemoji-tauri",
   "private": true,
   "version": "0.1.0",
+  "description": "Tauri desktop shell for WeChatEmoji",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tianhaishun/wechatemoji.git"
+  },
+  "homepage": "https://github.com/tianhaishun/wechatemoji",
   "type": "module",
   "scripts": {
     "tauri": "tauri",
     "tauri:dev": "tauri dev",
-    "tauri:build": "tauri build"
+    "tauri:build": "tauri build",
+    "tauri:check": "cargo check --manifest-path src-tauri/Cargo.toml"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2"

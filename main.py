@@ -105,6 +105,8 @@ def cmd_audit(args):
 
 
 def run_cli():
+    import config
+
     parser = argparse.ArgumentParser(
         description="微信表情包导入飞书工具 (CLI)",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -132,7 +134,7 @@ def run_cli():
         parser.print_help()
         return
 
-    os.makedirs("output/emojis", exist_ok=True)
+    os.makedirs(config.EMOJI_OUTPUT_DIR, exist_ok=True)
 
     if args.command == "extract":
         cmd_extract(args)

@@ -5,8 +5,9 @@ build/
 dist/
 *.spec
 !wechatemoji.spec
-!WeChatEmoji2Feishu.spec
 *.egg-info/
+.venv/
+venv/
 
 # Output files
 output/
@@ -41,6 +42,14 @@ runtime/
 vendor/ms-playwright/
 tauri_app/node_modules/
 tauri_app/src-tauri/target/
+.ruff_cache/
+.pytest_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+sniff_output.txt
 *.log
 
 # Env

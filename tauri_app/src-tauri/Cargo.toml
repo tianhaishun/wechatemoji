@@ -1,9 +1,12 @@
 [package]
 name = "wechatemoji_tauri"
 version = "0.1.0"
-description = "WeChat Emoji -> Feishu Tauri shell"
-authors = ["justin"]
+description = "Tauri desktop shell for WeChatEmoji"
+authors = ["Tian Haishun and contributors"]
 edition = "2021"
+license = "MIT"
+repository = "https://github.com/tianhaishun/wechatemoji"
+homepage = "https://github.com/tianhaishun/wechatemoji"
 
 [lib]
 name = "wechatemoji_tauri_lib"

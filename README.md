@@ -35,6 +35,13 @@
 - [SUPPORT.md](SUPPORT.md)：遇到问题时怎么寻求帮助
 - [LICENSE](LICENSE)：MIT 许可证正文
 
+工程规范方面，仓库也已经补齐了这些基础设施：
+
+- `.editorconfig`：统一编码、缩进和换行风格
+- `.gitattributes`：统一文本文件行尾与二进制文件属性
+- `.github/workflows/ci.yml`：自动执行 Python 语法检查和 Tauri `cargo check`
+- `.github/dependabot.yml`：帮助维护 Python / npm / Cargo / GitHub Actions 依赖
+
 ## 🧁 使用场景
 
 - 📦 备份自己的微信收藏表情
