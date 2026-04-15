@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security issue
+    url: https://github.com/tianhaishun/wechatemoji/blob/master/SECURITY.md
+    about: If your report involves sensitive data or account/session leakage, please follow SECURITY.md.
+  - name: Usage and support
+    url: https://github.com/tianhaishun/wechatemoji/blob/master/SUPPORT.md
+    about: Read SUPPORT.md before opening a general help request.

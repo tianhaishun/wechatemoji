@@ -2,6 +2,8 @@
 
 > 把微信里的可爱表情一只只请出来，再整整齐齐送去飞书的小工具 🐣💬➡️📦➡️🛫
 
+一个面向 Windows 的微信表情提取与飞书导入工具，适合做个人表情备份、整理和迁移。项目同时提供 GUI 和 CLI 两种使用方式，目标是把“提取表情这件麻烦事”变得更轻松一点。
+
 ## 🌈 项目简介
 
 `WeChatEmoji` 是一个面向 Windows 的小工具，帮助你从本机微信客户端里提取自定义表情，并导出为常见图片格式，进一步支持导入飞书个人表情或企业表情包。
@@ -22,6 +24,16 @@
 - 🚀 支持导入飞书个人表情
 - 🏢 支持导入飞书企业表情包
 - 🩺 提供 `audit` 审计命令，帮助检查环境和链路状态
+
+## 🤝 社区协作
+
+如果你希望一起把这个仓库做得更稳、更好用，下面这些文件会很有帮助：
+
+- [CONTRIBUTING.md](CONTRIBUTING.md)：如何提 Issue、提 PR、参与改进
+- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)：社区行为准则
+- [SECURITY.md](SECURITY.md)：安全问题提报方式
+- [SUPPORT.md](SUPPORT.md)：遇到问题时怎么寻求帮助
+- [LICENSE](LICENSE)：MIT 许可证正文
 
 ## 🧁 使用场景
 
@@ -157,4 +169,4 @@ dist\wechatemoji\wechatemoji.exe
 
 ## 📄 License
 
-MIT
+[MIT License](LICENSE)
