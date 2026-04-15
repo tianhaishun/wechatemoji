@@ -1,38 +1,69 @@
-# WeChat Emoji Extractor
+# 🎉 WeChatEmoji 🧸✨
 
-从微信客户端提取自定义表情包，支持解密导出为 PNG/GIF 格式。
+> 把微信里的可爱表情一只只请出来，再整整齐齐送去飞书的小工具 🐣💬➡️📦➡️🛫
 
-## 功能
+## 🌈 项目简介
 
-- 自动检测本机微信账号和表情数据库
-- 解密微信加密的表情文件（V1MMWX 格式）
-- 支持 AES 解密 CustomEmotion 目录下的表情
-- 导出为标准 PNG/GIF 格式
-- 提供图形界面 (GUI) 和命令行 (CLI) 两种使用方式
-- 可选：通过浏览器自动化导入飞书（实验性功能）
+`WeChatEmoji` 是一个面向 Windows 的小工具，帮助你从本机微信客户端里提取自定义表情，并导出为常见图片格式，进一步支持导入飞书个人表情或企业表情包。
 
-## 安装
+整个项目的目标很简单：
+
+- 😺 少一点手工翻目录
+- 🪄 少一点重复搬运
+- 🎈 多一点“表情终于整理好了”的快乐
+
+## ✨ 能做什么
+
+- 🔍 自动发现本机微信账号与表情数据
+- 🔐 提取并解密微信表情资源
+- 🖼️ 导出为常见图片格式（PNG / GIF 等）
+- 🧰 提供图形界面模式，适合日常使用
+- ⌨️ 提供 CLI 模式，方便调试和自动化
+- 🚀 支持导入飞书个人表情
+- 🏢 支持导入飞书企业表情包
+- 🩺 提供 `audit` 审计命令，帮助检查环境和链路状态
+
+## 🧁 使用场景
+
+- 📦 备份自己的微信收藏表情
+- 🧹 整理散落在本机的微信表情资源
+- 🛫 批量迁移到飞书继续使用
+- 🧪 验证提取链路、上传链路和运行环境
+
+## 🛠️ 环境要求
+
+- Windows 系统
+- 本机已安装并登录微信
+- 提取时建议微信客户端处于运行状态
+- Python 3.10+（源码运行时）
+
+## 🚀 安装
+
+### 1. 安装 Python 依赖
 
 ```bash
 pip install -r requirements.txt
 ```
 
-如需使用飞书导入功能，还需安装 Playwright：
+### 2. 安装 Playwright Chromium
+
+如果你需要使用飞书导入能力，请继续安装：
 
 ```bash
-pip install playwright
 python -m playwright install chromium
 ```
 
-## 使用
+## 🎮 使用方式
 
-### 图形界面（推荐）
+### 图形界面模式（推荐）🐥
 
 ```bash
 python main.py
 ```
 
-### 命令行
+适合大多数同学，点一点就能完成提取、预览和导入。
+
+### 命令行模式 ⌨️
 
 ```bash
 # 提取微信表情
@@ -41,42 +72,89 @@ python main.py --cli extract
 # 提取指定微信账号的表情
 python main.py --cli extract --wxid <wxid>
 
-# 审计环境
+# 上传到飞书个人表情
+python main.py --cli upload --mode personal
+
+# 上传到飞书企业表情包
+python main.py --cli upload --mode enterprise --pack-name "我的表情包"
+
+# 先提取，再继续导入飞书
+python main.py --cli full --mode personal
+
+# 检查提取链路和上传环境
 python main.py --cli audit
 ```
 
-### 导出位置
+## 📦 导出与数据目录
 
-表情默认导出到 `output/emojis/` 目录。
+为了避免把运行状态写到 `exe` 同级目录，项目默认会把用户可写数据放到本机用户目录下。
 
-## 项目结构
+- 表情导出目录：`%LOCALAPPDATA%\wechatemoji\output\emojis`
+- 调试信息目录：`%LOCALAPPDATA%\wechatemoji\output\debug`
+- 临时文件目录：`%LOCALAPPDATA%\wechatemoji\output\tmp`
 
-```
-├── main.py              # 主入口
-├── gui.py               # GUI 界面 (PyWebView)
-├── config.py            # 配置文件
-├── wechat_extractor.py  # 微信表情提取核心模块
-├── key_extractor.py     # 微信数据库密钥提取
-├── feishu_uploader.py   # 飞书上传模块（实验性）
-├── web/
-│   └── index.html       # GUI 前端页面
-└── requirements.txt     # Python 依赖
+## 🏗️ 打包 EXE
+
+项目已经准备好了打包脚本：
+
+```bash
+build.bat
 ```
 
-## 技术原理
+这个脚本会完成以下动作：
 
-1. 定位微信数据目录下的 `emoticon.db`（SQLite 数据库）
-2. 通过微信进程内存提取数据库解密密钥
-3. 使用 SQLCipher 解密数据库，读取表情记录
-4. 对于 V1MMWX 加密格式，使用 AES-CBC 解密
-5. 将解密后的二进制数据转换为 PNG/GIF 图片
+- 🎬 检查并整理 Playwright Chromium runtime
+- 🧹 清理正在运行的旧版程序
+- 📦 使用 PyInstaller 打包
+- ✅ 校验 `wechatemoji.exe` 和前端资源是否正确输出
 
-## 注意事项
+打包后的主程序通常位于：
 
-- 需要在 Windows 系统上运行
-- 提取表情时需要微信客户端正在运行（用于获取解密密钥）
-- 本工具仅用于个人数据备份，请勿用于其他用途
+```text
+dist\wechatemoji\wechatemoji.exe
+```
 
-## License
+## 🗂️ 项目结构
+
+```text
+.
+├─ main.py                     # 程序入口
+├─ gui.py                      # PyWebView 图形界面桥接
+├─ config.py                   # 路径与运行配置
+├─ wechat_extractor.py         # 微信表情提取核心
+├─ key_extractor.py            # 微信密钥提取
+├─ feishu_uploader.py          # 飞书上传逻辑
+├─ bridge_common.py            # GUI / 桥接公共逻辑
+├─ tauri_bridge.py             # Tauri 桥接
+├─ web/
+│  ├─ index.html               # 前端页面
+│  └─ tauri-bridge.js          # Tauri 前端桥接
+├─ tauri_app/                  # Tauri 桌面端工程
+├─ build.bat                   # 一键打包脚本
+└─ wechatemoji.spec            # PyInstaller 配置
+```
+
+## 🧠 工作原理
+
+1. 🕵️ 定位微信数据目录与表情数据库
+2. 🔑 提取数据库解密所需信息
+3. 🧩 读取并整理表情记录
+4. 🖼️ 还原导出为可直接查看/上传的图片文件
+5. 🚀 按需导入飞书个人表情或企业表情包
+
+## ⚠️ 注意事项
+
+- 仅建议用于个人数据整理、备份与迁移 🌿
+- 飞书上传能力依赖浏览器自动化，页面结构变化可能影响稳定性 🧪
+- 企业表情包上传请遵循所在组织的规范要求 🏢
+- 如果你是从源码运行，请先确认 Playwright Chromium 已安装完成 🛠️
+
+## 💖 致谢
+
+特别感谢 **肖启博同事** 提供的创意支持，让这个项目从“能用”走向了“更有趣、更顺手” 🎨✨
+
+也感谢 **姚康利领导** 给予的创作空间，让我们可以把想法做成真正落地的小工具 🌟🙌
+
+## 📄 License
 
 MIT
