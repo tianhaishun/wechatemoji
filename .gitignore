@@ -1,0 +1,47 @@
+__pycache__/
+*.pyc
+*.pyo
+build/
+dist/
+*.spec
+!wechatemoji.spec
+!WeChatEmoji2Feishu.spec
+*.egg-info/
+
+# Output files
+output/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Screenshots & temp files
+*.png
+!web/assets/*.png
+screenshot*.png
+
+# Playwright MCP
+.playwright-mcp/
+
+# Claude
+.claude/
+
+# Captured API data
+captured_api.json
+
+# Browser data
+browser_data/
+
+# Local packaged runtimes / app state
+runtime/
+vendor/ms-playwright/
+tauri_app/node_modules/
+tauri_app/src-tauri/target/
+*.log
+
+# Env
+.env
